@@ -7,3 +7,7 @@
 - Created 44 issues (23 in Sprint 1 = 54 pts, 21 in Sprint 2 = 57 pts), assigned them and added them to the project.
 - Wrote docs/BACKLOG.md and docs/SPRINT_PLAN.md.
 - Note: the project belongs to Guna-meda, so GitHub does not let us link it to the repo (the repo is owned by Deepikachettiar). The board is shared by link instead.
+
+## 2026-10-21 (README setup steps)
+- Finalised the README setup steps after the scaffold was merged: prerequisites, folder structure, server and client setup, env variables and commands (issue #12).
+- Seed script and CI are not merged yet, so the README notes they will be added later.
