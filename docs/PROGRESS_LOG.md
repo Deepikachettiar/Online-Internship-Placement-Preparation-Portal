@@ -41,6 +41,12 @@
 - Added paginated browsing for issue #16: GET /api/internships with page and limit query params, filtering only Active listings from approved companies, sorted newest first.
 - Built BrowseInternships page (client/src/pages/BrowseInternships.jsx) with card list and pagination controls (Previous/Next, page counters).
 
+## 2026-10-22 (search and filter internships)
+- Added search and multi-criteria filtering for issue #17: GET /api/internships supports search/q keyword, skill, location, workMode, and minStipend parameters.
+- Empty query returns all active roles; indexes on title, location, and requiredSkills ensure fast response times (< 1.5s).
+- Added interactive search bar and filter controls to BrowseInternships.jsx with filter clearing and pagination synchronization.
+
+
 
 
 

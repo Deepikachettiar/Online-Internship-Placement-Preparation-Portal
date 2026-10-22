@@ -5,12 +5,15 @@ const User = require("../models/User");
 const { checkEligibility } = require("../utils/eligibility");
 const { validateInternshipPayload } = require("../utils/internshipValidation");
 
-// Browse internships (paginated, active listings from approved companies, newest first - issue #16)
+// Search, filter, and browse internships (paginated, active listings from approved companies - issues #16 & #17)
 router.get("/", async (req, res) => {
   try {
     const page = Math.max(1, parseInt(req.query.page, 10) || 1);
     const limit = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 10));
     const skip = (page - 1) * limit;
+
+    const { q, search, skill, location, workMode, minStipend } = req.query;
+    const searchTerm = (q || search || "").trim();
 
     // Find all approved companies
     const approvedCompanies = await User.find({
@@ -23,6 +26,34 @@ router.get("/", async (req, res) => {
       isPublished: true,
       company: { $in: approvedCompanies },
     };
+
+    if (searchTerm) {
+      filter.$or = [
+        { title: { $regex: searchTerm, $options: "i" } },
+        { description: { $regex: searchTerm, $options: "i" } },
+        { location: { $regex: searchTerm, $options: "i" } },
+        { requiredSkills: { $regex: searchTerm, $options: "i" } },
+      ];
+    }
+
+    if (skill && skill.trim()) {
+      filter.requiredSkills = { $regex: skill.trim(), $options: "i" };
+    }
+
+    if (location && location.trim()) {
+      filter.location = { $regex: location.trim(), $options: "i" };
+    }
+
+    if (workMode && ["Remote", "On-site", "Hybrid"].includes(workMode)) {
+      filter.workMode = workMode;
+    }
+
+    if (minStipend !== undefined && minStipend !== "") {
+      const stipendNum = Number(minStipend);
+      if (!Number.isNaN(stipendNum)) {
+        filter.stipend = { $gte: stipendNum };
+      }
+    }
 
     const [internships, total] = await Promise.all([
       Internship.find(filter)
