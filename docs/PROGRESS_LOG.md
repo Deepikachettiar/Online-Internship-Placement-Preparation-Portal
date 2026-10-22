@@ -37,5 +37,10 @@
 - Enforced that deactivated/inactive internships reject new student applications (applications.js) while existing applications remain visible.
 - Built CompanyInternships management table (client/src/pages/CompanyInternships.jsx) with inline edit and deactivate actions.
 
+## 2026-10-22 (browse internships with pagination)
+- Added paginated browsing for issue #16: GET /api/internships with page and limit query params, filtering only Active listings from approved companies, sorted newest first.
+- Built BrowseInternships page (client/src/pages/BrowseInternships.jsx) with card list and pagination controls (Previous/Next, page counters).
+
+
 
 

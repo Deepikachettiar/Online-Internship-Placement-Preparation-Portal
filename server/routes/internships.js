@@ -5,6 +5,51 @@ const User = require("../models/User");
 const { checkEligibility } = require("../utils/eligibility");
 const { validateInternshipPayload } = require("../utils/internshipValidation");
 
+// Browse internships (paginated, active listings from approved companies, newest first - issue #16)
+router.get("/", async (req, res) => {
+  try {
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 10));
+    const skip = (page - 1) * limit;
+
+    // Find all approved companies
+    const approvedCompanies = await User.find({
+      role: "company",
+      companyApproved: true,
+    }).distinct("_id");
+
+    const filter = {
+      status: "Active",
+      isPublished: true,
+      company: { $in: approvedCompanies },
+    };
+
+    const [internships, total] = await Promise.all([
+      Internship.find(filter)
+        .populate(
+          "company",
+          "name companyName companyDescription logoUrl location industry website companyApproved"
+        )
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      Internship.countDocuments(filter),
+    ]);
+
+    const totalPages = Math.ceil(total / limit) || 1;
+
+    return res.status(200).json({
+      internships,
+      total,
+      page,
+      totalPages,
+      limit,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Unable to load internships." });
+  }
+});
+
 // Post an internship (issue #14)
 // Only approved companies can post internships
 router.post("/", async (req, res) => {
