@@ -3,9 +3,9 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
+
 const applicationRoutes = require("./routes/applications");
-
-
+const authRoutes = require("./routes/auth");
 const healthRoutes = require("./routes/health");
 const internshipRoutes = require("./routes/internships");
 const studentRoutes = require("./routes/students");
@@ -20,6 +20,9 @@ app.use(express.json());
 // Health check route
 app.use("/api/health", healthRoutes);
 
+// Authentication and student registration routes
+app.use("/api/auth", authRoutes);
+
 // Application routes
 app.use("/api/applications", applicationRoutes);
 
@@ -29,7 +32,7 @@ app.use("/api/internships", internshipRoutes);
 // Student profile routes
 app.use("/api/students", studentRoutes);
 
-const PORT =process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;
 
 async function startServer() {
   try {
@@ -50,4 +53,3 @@ async function startServer() {
 }
 
 startServer();
-
