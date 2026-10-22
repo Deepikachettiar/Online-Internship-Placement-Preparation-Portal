@@ -2,10 +2,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import LogoutButton from "./components/LogoutButton";
+import { getToken } from "./utils/auth";
 import "./App.css";
 
 function App() {
   const [apiStatus, setApiStatus] = useState("Not checked");
+  const [loggedIn, setLoggedIn] = useState(Boolean(getToken()));
 
   async function checkApi() {
     try {
@@ -31,6 +34,12 @@ function App() {
         <Link to="/company-register">Company Registration</Link>
         {" | "}
         <Link to="/login">Login</Link>
+        {loggedIn && (
+          <>
+            {" | "}
+            <LogoutButton onLogout={() => setLoggedIn(false)} />
+          </>
+        )}
       </nav>
 
       <section>
