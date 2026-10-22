@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-
 const internshipSchema = new mongoose.Schema(
   {
     title: { type: String, required: true, trim: true },
@@ -13,5 +12,4 @@ const internshipSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
 module.exports = mongoose.models.Internship || mongoose.model("Internship", internshipSchema);
