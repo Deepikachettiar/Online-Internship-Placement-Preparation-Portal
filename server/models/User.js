@@ -13,6 +13,11 @@ const userSchema = new mongoose.Schema(
     resumeUrl: { type: String, default: "" },
     companyName: { type: String, default: "" },
     companyApproved: { type: Boolean, default: false },
+    companyDescription: { type: String, default: "", trim: true },
+    logoUrl: { type: String, default: "", trim: true },
+    location: { type: String, default: "", trim: true },
+    industry: { type: String, default: "", trim: true },
+    website: { type: String, default: "", trim: true },
   },
   { timestamps: true }
 );

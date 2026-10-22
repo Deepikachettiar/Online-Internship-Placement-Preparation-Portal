@@ -19,3 +19,9 @@
 ## 2026-10-22 (student profile)
 - Added the student academic profile for issue #8: GET and PUT /api/students/me, CGPA and graduation year validation (CGPA outside 0 to 10 returns 400), department, graduation year and CGPA fields on the User model, and a profile page (client/src/pages/StudentProfile.jsx).
 - Routes use req.user from the auth middleware, same as the other student routes. The page is not linked in the app yet because routing comes with the login issue and the dashboard shell issue.
+
+## 2026-10-22 (company profile)
+- Added company profile management for issue #13: GET and PUT /api/companies/me, GET /api/companies/:id for company details, companyDescription, logoUrl, location, industry, and website fields on the User model.
+- Added company profile validation (utils/companyValidation.js) with test suite.
+- Added company profile page (client/src/pages/CompanyProfile.jsx) and InternshipCard component with company information display.
+
