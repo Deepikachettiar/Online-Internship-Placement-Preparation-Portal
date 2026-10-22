@@ -8,6 +8,7 @@ const applicationRoutes = require("./routes/applications");
 
 const healthRoutes = require("./routes/health");
 const internshipRoutes = require("./routes/internships");
+const studentRoutes = require("./routes/students");
 
 dotenv.config();
 
@@ -25,7 +26,10 @@ app.use("/api/applications", applicationRoutes);
 // Internship routes, including eligibility check
 app.use("/api/internships", internshipRoutes);
 
-const PORT = process.env.PORT || 5000;
+// Student profile routes
+app.use("/api/students", studentRoutes);
+
+const PORT =process.env.PORT || 5000;
 
 async function startServer() {
   try {
