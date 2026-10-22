@@ -3,6 +3,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const applicationRoutes = require("./routes/applications");
+
 
 const healthRoutes = require("./routes/health");
 const internshipRoutes = require("./routes/internships");
@@ -16,6 +18,9 @@ app.use(express.json());
 
 // Health check route
 app.use("/api/health", healthRoutes);
+
+// Application routes
+app.use("/api/applications", applicationRoutes);
 
 // Internship routes, including eligibility check
 app.use("/api/internships", internshipRoutes);
