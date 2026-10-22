@@ -11,3 +11,7 @@
 ## 2026-10-21 (README setup steps)
 - Finalised the README setup steps after the scaffold was merged: prerequisites, folder structure, server and client setup, env variables and commands (issue #12).
 - Seed script and CI are not merged yet, so the README notes they will be added later.
+
+## 2026-10-22 (logout)
+- Added logout for issue #7: token helpers (client/src/utils/auth.js) and a Logout button that clears the saved token and goes to /login. The button shows in the nav only when a token exists.
+- The "protected calls return 401 after logout" check depends on the auth middleware from the login and RBAC issues.
