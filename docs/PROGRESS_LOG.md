@@ -15,3 +15,7 @@
 ## 2026-10-22 (logout)
 - Added logout for issue #7: token helpers (client/src/utils/auth.js) and a Logout button that clears the saved token and goes to /login. The button shows in the nav only when a token exists.
 - The "protected calls return 401 after logout" check depends on the auth middleware from the login and RBAC issues.
+
+## 2026-10-22 (student profile)
+- Added the student academic profile for issue #8: GET and PUT /api/students/me, CGPA and graduation year validation (CGPA outside 0 to 10 returns 400), department, graduation year and CGPA fields on the User model, and a profile page (client/src/pages/StudentProfile.jsx).
+- Routes use req.user from the auth middleware, same as the other student routes. The page is not linked in the app yet because routing comes with the login issue and the dashboard shell issue.
