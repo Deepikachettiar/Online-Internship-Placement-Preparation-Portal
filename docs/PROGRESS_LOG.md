@@ -25,3 +25,11 @@
 - Added company profile validation (utils/companyValidation.js) with test suite.
 - Added company profile page (client/src/pages/CompanyProfile.jsx) and InternshipCard component with company information display.
 
+## 2026-10-22 (post an internship)
+- Added internship posting for issue #14: POST /api/internships, guarded by company role and approval check (unapproved company receives HTTP 403). New postings are saved as Active and visible to students.
+- Enhanced Internship model with stipend, duration, workMode, deadline, and compound text index.
+- Added payload validation (utils/internshipValidation.js) with comprehensive unit tests.
+- Added company listings route (GET /api/internships/company/me) and single listing route (GET /api/internships/:id).
+- Built PostInternship page (client/src/pages/PostInternship.jsx) with full listing configuration form.
+
+
