@@ -32,4 +32,10 @@
 - Added company listings route (GET /api/internships/company/me) and single listing route (GET /api/internships/:id).
 - Built PostInternship page (client/src/pages/PostInternship.jsx) with full listing configuration form.
 
+## 2026-10-22 (edit and deactivate internship)
+- Added editing and deactivation for issue #15: PUT /api/internships/:id (owner only check with payload validation) and PATCH /api/internships/:id/deactivate (sets status to Inactive).
+- Enforced that deactivated/inactive internships reject new student applications (applications.js) while existing applications remain visible.
+- Built CompanyInternships management table (client/src/pages/CompanyInternships.jsx) with inline edit and deactivate actions.
+
+
 

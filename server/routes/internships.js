@@ -90,6 +90,106 @@ router.get("/company/me", async (req, res) => {
   }
 });
 
+// Edit an internship (issue #15, owner only)
+router.put("/:id", async (req, res) => {
+  try {
+    if (!req.user?._id) {
+      return res.status(401).json({ message: "Authentication required." });
+    }
+
+    const internship = await Internship.findById(req.params.id);
+    if (!internship) {
+      return res.status(404).json({ message: "Internship not found." });
+    }
+
+    // Owner only check (AC-OIP-F-010)
+    if (
+      internship.company.toString() !== req.user._id.toString() &&
+      req.user.role !== "admin"
+    ) {
+      return res.status(403).json({ message: "Forbidden: You can only edit your own listings." });
+    }
+
+    const {
+      title,
+      description,
+      location,
+      workMode,
+      minCGPA,
+      requiredSkills,
+      stipend,
+      duration,
+      deadline,
+      status,
+    } = req.body;
+
+    const error = validateInternshipPayload({
+      title,
+      description,
+      deadline,
+      minCGPA,
+      stipend,
+      workMode,
+      requiredSkills,
+    });
+    if (error) {
+      return res.status(400).json({ message: error });
+    }
+
+    if (title !== undefined) internship.title = title.trim();
+    if (description !== undefined) internship.description = description.trim();
+    if (location !== undefined) internship.location = location.trim();
+    if (workMode !== undefined) internship.workMode = workMode;
+    if (minCGPA !== undefined) internship.minCGPA = Number(minCGPA);
+    if (stipend !== undefined) internship.stipend = Number(stipend);
+    if (duration !== undefined) internship.duration = duration.trim();
+    if (deadline !== undefined) internship.deadline = new Date(deadline);
+    if (status !== undefined && ["Active", "Inactive", "Closed"].includes(status)) {
+      internship.status = status;
+    }
+    if (requiredSkills !== undefined && Array.isArray(requiredSkills)) {
+      internship.requiredSkills = requiredSkills.map((s) => String(s).trim()).filter(Boolean);
+    }
+
+    await internship.save();
+    return res.status(200).json({ message: "Internship updated successfully.", internship });
+  } catch (error) {
+    return res.status(500).json({ message: "Unable to update internship." });
+  }
+});
+
+// Deactivate an internship (issue #15, owner only)
+router.patch("/:id/deactivate", async (req, res) => {
+  try {
+    if (!req.user?._id) {
+      return res.status(401).json({ message: "Authentication required." });
+    }
+
+    const internship = await Internship.findById(req.params.id);
+    if (!internship) {
+      return res.status(404).json({ message: "Internship not found." });
+    }
+
+    // Owner only check (AC-OIP-F-010)
+    if (
+      internship.company.toString() !== req.user._id.toString() &&
+      req.user.role !== "admin"
+    ) {
+      return res.status(403).json({ message: "Forbidden: You can only deactivate your own listings." });
+    }
+
+    internship.status = "Inactive";
+    await internship.save();
+
+    return res.status(200).json({
+      message: "Internship deactivated successfully.",
+      internship,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Unable to deactivate internship." });
+  }
+});
+
 // Get single internship by ID
 router.get("/:id", async (req, res) => {
   try {
