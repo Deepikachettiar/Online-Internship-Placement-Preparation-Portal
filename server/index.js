@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const applicationRoutes = require("./routes/applications");
-
+const resumeRoutes = require("./routes/resumes");
 
 const healthRoutes = require("./routes/health");
 const internshipRoutes = require("./routes/internships");
@@ -24,6 +24,9 @@ app.use("/api/applications", applicationRoutes);
 
 // Internship routes, including eligibility check
 app.use("/api/internships", internshipRoutes);
+
+// Resume routes
+app.use("/api/resumes", resumeRoutes);
 
 const PORT = process.env.PORT || 5000;
 
