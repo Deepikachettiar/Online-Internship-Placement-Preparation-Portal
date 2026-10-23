@@ -178,7 +178,7 @@ export default function CompanyProfile({ token: propToken }) {
         <button type="submit">Save Company Profile</button>
       </form>
 
-      {message && <p role="status" style={{ color: "green" }}>{message}</p>}
+      {message && <output style={{ color: "green", display: "block" }}>{message}</output>}
       {error && <p role="alert" style={{ color: "red" }}>{error}</p>}
     </main>
   );
