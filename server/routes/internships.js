@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Internship = require("../models/Internship");
 const User = require("../models/User");
+const Application = require("../models/Application");
 const { checkEligibility } = require("../utils/eligibility");
 const { validateInternshipPayload } = require("../utils/internshipValidation");
 
@@ -72,6 +73,7 @@ router.post("/", async (req, res) => {
       internship,
     });
   } catch (error) {
+    console.error("Unable to post internship:", error);
     return res.status(500).json({ message: "Unable to post internship." });
   }
 });
@@ -86,25 +88,36 @@ router.get("/company/me", async (req, res) => {
     const listings = await Internship.find({ company: req.user._id }).sort({ createdAt: -1 });
     return res.status(200).json({ internships: listings });
   } catch (error) {
+    console.error("Unable to load company listings:", error);
     return res.status(500).json({ message: "Unable to load company listings." });
   }
 });
 
-// Get single internship by ID
-router.get("/:id", async (req, res) => {
+// Company owners can view applicants for their own internship only (issue #21)
+router.get("/:id/applications", async (req, res) => {
   try {
-    const internship = await Internship.findById(req.params.id).populate(
-      "company",
-      "name companyName companyDescription logoUrl location industry website companyApproved"
-    );
+    if (!req.user?._id) return res.status(401).json({ message: "Authentication required." });
 
-    if (!internship) {
-      return res.status(404).json({ message: "Internship not found." });
+    const internship = await Internship.findById(req.params.id);
+    if (!internship) return res.status(404).json({ message: "Internship not found." });
+
+    const role = String(req.user.role || "").toLowerCase();
+    const isAdmin = role === "admin";
+    const ownerId = internship.company?._id || internship.company;
+    const isOwner = ownerId && String(ownerId) === String(req.user._id);
+
+    if (!isAdmin && !isOwner) {
+      return res.status(403).json({ message: "You cannot view applicants for this internship." });
     }
 
-    return res.status(200).json({ internship });
+    const applications = await Application.find({ internship: internship._id })
+      .populate("student", "name email cgpa skills")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({ internship, applications });
   } catch (error) {
-    return res.status(500).json({ message: "Unable to retrieve internship." });
+    console.error("Unable to load applicants:", error);
+    return res.status(500).json({ message: "Unable to load applicants." });
   }
 });
 
@@ -123,7 +136,27 @@ router.get("/:id/eligibility", async (req, res) => {
     const result = checkEligibility(req.user, internship);
     return res.status(200).json(result);
   } catch (error) {
+    console.error("Unable to check eligibility:", error);
     return res.status(500).json({ message: "Unable to check eligibility." });
+  }
+});
+
+// Get single internship by ID
+router.get("/:id", async (req, res) => {
+  try {
+    const internship = await Internship.findById(req.params.id).populate(
+      "company",
+      "name companyName companyDescription logoUrl location industry website companyApproved"
+    );
+
+    if (!internship) {
+      return res.status(404).json({ message: "Internship not found." });
+    }
+
+    return res.status(200).json({ internship });
+  } catch (error) {
+    console.error("Unable to retrieve internship:", error);
+    return res.status(500).json({ message: "Unable to retrieve internship." });
   }
 });
 

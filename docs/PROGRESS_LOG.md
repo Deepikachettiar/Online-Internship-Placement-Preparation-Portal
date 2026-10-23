@@ -32,4 +32,6 @@
 - Added company listings route (GET /api/internships/company/me) and single listing route (GET /api/internships/:id).
 - Built PostInternship page (client/src/pages/PostInternship.jsx) with full listing configuration form.
 
-
+## 2026-10-23 (student skills)
+- Added student skills for issue #9: GET, POST, PUT and DELETE on /api/students/me/skills. Skills are trimmed, lowercased and stored as an array on the student. Duplicates and empty or unsafe values are rejected with 400. Added a skill tags section on the profile page (add, edit, delete).
+- Routes use req.user from the auth middleware, same as the profile routes.
