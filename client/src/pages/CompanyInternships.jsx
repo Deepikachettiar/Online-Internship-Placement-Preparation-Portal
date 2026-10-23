@@ -19,27 +19,31 @@ export default function CompanyInternships({ token: propToken }) {
     deadline: "",
   });
 
-  const headers = {
-    "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-
-  async function loadListings() {
-    try {
-      setLoading(true);
-      const res = await fetch("/api/internships/company/me", { headers });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to load listings.");
-      setInternships(data.internships || []);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
   useEffect(() => {
-    loadListings();
+    let active = true;
+
+    async function load() {
+      try {
+        const res = await fetch("/api/internships/company/me", {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Failed to load listings.");
+        if (active) setInternships(data.internships || []);
+      } catch (err) {
+        if (active) setError(err.message);
+      } finally {
+        if (active) setLoading(false);
+      }
+    }
+
+    void load().catch((err) => {
+      if (active) setError(err.message || "Failed to load listings.");
+    });
+
+    return () => {
+      active = false;
+    };
   }, [token]);
 
   async function handleDeactivate(id) {
@@ -52,7 +56,7 @@ export default function CompanyInternships({ token: propToken }) {
     try {
       const res = await fetch(`/api/internships/${id}/deactivate`, {
         method: "PATCH",
-        headers,
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Unable to deactivate listing.");
@@ -88,7 +92,10 @@ export default function CompanyInternships({ token: propToken }) {
     try {
       const res = await fetch(`/api/internships/${editingId}`, {
         method: "PUT",
-        headers,
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({
           ...editForm,
           minCGPA: editForm.minCGPA === "" ? 0 : Number(editForm.minCGPA),
@@ -115,7 +122,7 @@ export default function CompanyInternships({ token: propToken }) {
       <h1>Manage Posted Internships</h1>
       <p>View, modify, or deactivate your active internship postings.</p>
 
-      {message && <p role="status" style={{ color: "green" }}>{message}</p>}
+      {message && <output style={{ color: "green", display: "block" }}>{message}</output>}
       {error && <p role="alert" style={{ color: "red" }}>{error}</p>}
 
       {editingId && (

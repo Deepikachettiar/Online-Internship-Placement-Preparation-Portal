@@ -37,5 +37,6 @@
 - Enforced that deactivated/inactive internships reject new student applications (applications.js) while existing applications remain visible.
 - Built CompanyInternships management table (client/src/pages/CompanyInternships.jsx) with inline edit and deactivate actions.
 
-
-
+## 2026-10-23 (student skills)
+- Added student skills for issue #9: GET, POST, PUT and DELETE on /api/students/me/skills. Skills are trimmed, lowercased and stored as an array on the student. Duplicates and empty or unsafe values are rejected with 400. Added a skill tags section on the profile page (add, edit, delete).
+- Routes use req.user from the auth middleware, same as the profile routes.
