@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { BrowserRouter, Link, Routes, Route } from "react-router-dom";
+import { Link, Routes, Route } from "react-router-dom";
 import axios from "axios";
 import LogoutButton from "./components/LogoutButton";
 import { getToken } from "./utils/auth";

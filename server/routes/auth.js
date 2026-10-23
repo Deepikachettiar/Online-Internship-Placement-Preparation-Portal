@@ -1,9 +1,34 @@
-
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 
 const router = express.Router();
+
+const isNonEmptyString = (value) =>
+  typeof value === "string" && Boolean(value.trim());
+
+async function findExistingUser(email) {
+  return User.findOne({ email: email.trim().toLowerCase() });
+}
+
+function handleRegistrationError(error, res, type) {
+  if (error.code === 11000) {
+    return res.status(409).json({
+      message: "An account with this email already exists.",
+    });
+  }
+
+  if (error.name === "ValidationError") {
+    return res.status(400).json({
+      message: "Invalid registration details.",
+    });
+  }
+
+  console.error(`${type} registration failed:`, error.message);
+  return res.status(500).json({
+    message: `Unable to register ${type.toLowerCase()}.`,
+  });
+}
 
 // Student registration
 router.post("/register/student", async (req, res) => {
@@ -11,11 +36,9 @@ router.post("/register/student", async (req, res) => {
     const { name, email, password } = req.body;
 
     if (
-      typeof name !== "string" ||
-      typeof email !== "string" ||
+      !isNonEmptyString(name) ||
+      !isNonEmptyString(email) ||
       typeof password !== "string" ||
-      !name.trim() ||
-      !email.trim() ||
       !password
     ) {
       return res.status(400).json({
@@ -30,22 +53,17 @@ router.post("/register/student", async (req, res) => {
     }
 
     const normalizedEmail = email.trim().toLowerCase();
-    const existingUser = await User.findOne({
-      email: normalizedEmail,
-    });
 
-    if (existingUser) {
+    if (await findExistingUser(normalizedEmail)) {
       return res.status(409).json({
         message: "An account with this email already exists.",
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 12);
-
     const student = await User.create({
       name: name.trim(),
       email: normalizedEmail,
-      password: hashedPassword,
+      password: await bcrypt.hash(password, 12),
       role: "student",
     });
 
@@ -59,23 +77,7 @@ router.post("/register/student", async (req, res) => {
       },
     });
   } catch (error) {
-    if (error.code === 11000) {
-      return res.status(409).json({
-        message: "An account with this email already exists.",
-      });
-    }
-
-    if (error.name === "ValidationError") {
-      return res.status(400).json({
-        message: "Invalid registration details.",
-      });
-    }
-
-    console.error("Student registration failed:", error.message);
-
-    return res.status(500).json({
-      message: "Unable to register student.",
-    });
+    return handleRegistrationError(error, res, "Student");
   }
 });
 
@@ -92,18 +94,13 @@ router.post("/register/company", async (req, res) => {
     } = req.body;
 
     if (
-      typeof name !== "string" ||
-      typeof email !== "string" ||
+      !isNonEmptyString(name) ||
+      !isNonEmptyString(email) ||
       typeof password !== "string" ||
-      typeof companyName !== "string" ||
-      typeof websiteDomain !== "string" ||
-      typeof contactDetails !== "string" ||
-      !name.trim() ||
-      !email.trim() ||
       !password ||
-      !companyName.trim() ||
-      !websiteDomain.trim() ||
-      !contactDetails.trim()
+      !isNonEmptyString(companyName) ||
+      !isNonEmptyString(websiteDomain) ||
+      !isNonEmptyString(contactDetails)
     ) {
       return res.status(400).json({
         message:
@@ -118,7 +115,6 @@ router.post("/register/company", async (req, res) => {
     }
 
     const normalizedEmail = email.trim().toLowerCase();
-
     const personalEmailDomains = [
       "gmail.com",
       "yahoo.com",
@@ -127,34 +123,24 @@ router.post("/register/company", async (req, res) => {
       "icloud.com",
       "proton.me",
     ];
-
     const emailDomain = normalizedEmail.split("@")[1];
 
-    if (
-      !emailDomain ||
-      personalEmailDomains.includes(emailDomain)
-    ) {
+    if (!emailDomain || personalEmailDomains.includes(emailDomain)) {
       return res.status(400).json({
         message: "Please use a corporate email address.",
       });
     }
 
-    const existingUser = await User.findOne({
-      email: normalizedEmail,
-    });
-
-    if (existingUser) {
+    if (await findExistingUser(normalizedEmail)) {
       return res.status(409).json({
         message: "An account with this email already exists.",
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 12);
-
     const company = await User.create({
       name: name.trim(),
       email: normalizedEmail,
-      password: hashedPassword,
+      password: await bcrypt.hash(password, 12),
       role: "company",
       companyName: companyName.trim(),
       websiteDomain: websiteDomain.trim(),
@@ -176,23 +162,7 @@ router.post("/register/company", async (req, res) => {
       },
     });
   } catch (error) {
-    if (error.code === 11000) {
-      return res.status(409).json({
-        message: "An account with this email already exists.",
-      });
-    }
-
-    if (error.name === "ValidationError") {
-      return res.status(400).json({
-        message: "Invalid registration details.",
-      });
-    }
-
-    console.error("Company registration failed:", error.message);
-
-    return res.status(500).json({
-      message: "Unable to register company.",
-    });
+    return handleRegistrationError(error, res, "Company");
   }
 });
 
