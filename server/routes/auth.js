@@ -30,8 +30,9 @@ router.post("/register/student", async (req, res) => {
     }
 
     const normalizedEmail = email.trim().toLowerCase();
-
-    const existingUser = await User.findOne({ email: normalizedEmail });
+    const existingUser = await User.findOne({
+      email: normalizedEmail,
+    });
 
     if (existingUser) {
       return res.status(409).json({
@@ -74,6 +75,123 @@ router.post("/register/student", async (req, res) => {
 
     return res.status(500).json({
       message: "Unable to register student.",
+    });
+  }
+});
+
+// Company registration
+router.post("/register/company", async (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      password,
+      companyName,
+      websiteDomain,
+      contactDetails,
+    } = req.body;
+
+    if (
+      typeof name !== "string" ||
+      typeof email !== "string" ||
+      typeof password !== "string" ||
+      typeof companyName !== "string" ||
+      typeof websiteDomain !== "string" ||
+      typeof contactDetails !== "string" ||
+      !name.trim() ||
+      !email.trim() ||
+      !password ||
+      !companyName.trim() ||
+      !websiteDomain.trim() ||
+      !contactDetails.trim()
+    ) {
+      return res.status(400).json({
+        message:
+          "Name, email, password, company name, website domain, and contact details are required.",
+      });
+    }
+
+    if (password.length < 8) {
+      return res.status(400).json({
+        message: "Password must be at least 8 characters long.",
+      });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const personalEmailDomains = [
+      "gmail.com",
+      "yahoo.com",
+      "outlook.com",
+      "hotmail.com",
+      "icloud.com",
+      "proton.me",
+    ];
+
+    const emailDomain = normalizedEmail.split("@")[1];
+
+    if (
+      !emailDomain ||
+      personalEmailDomains.includes(emailDomain)
+    ) {
+      return res.status(400).json({
+        message: "Please use a corporate email address.",
+      });
+    }
+
+    const existingUser = await User.findOne({
+      email: normalizedEmail,
+    });
+
+    if (existingUser) {
+      return res.status(409).json({
+        message: "An account with this email already exists.",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    const company = await User.create({
+      name: name.trim(),
+      email: normalizedEmail,
+      password: hashedPassword,
+      role: "company",
+      companyName: companyName.trim(),
+      websiteDomain: websiteDomain.trim(),
+      contactDetails: contactDetails.trim(),
+      companyApproved: false,
+    });
+
+    return res.status(201).json({
+      message: "Company registered successfully. Pending Approval.",
+      user: {
+        id: company._id,
+        name: company.name,
+        email: company.email,
+        role: company.role,
+        companyName: company.companyName,
+        websiteDomain: company.websiteDomain,
+        contactDetails: company.contactDetails,
+        approvalStatus: "Pending Approval",
+      },
+    });
+  } catch (error) {
+    if (error.code === 11000) {
+      return res.status(409).json({
+        message: "An account with this email already exists.",
+      });
+    }
+
+    if (error.name === "ValidationError") {
+      return res.status(400).json({
+        message: "Invalid registration details.",
+      });
+    }
+
+    console.error("Company registration failed:", error.message);
+
+    return res.status(500).json({
+      message: "Unable to register company.",
     });
   }
 });
