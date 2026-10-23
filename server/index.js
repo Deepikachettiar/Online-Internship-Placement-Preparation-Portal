@@ -6,6 +6,8 @@ const cors = require("cors");
 
 const applicationRoutes = require("./routes/applications");
 const authRoutes = require("./routes/auth");
+const resumeRoutes = require("./routes/resumes");
+
 const healthRoutes = require("./routes/health");
 const internshipRoutes = require("./routes/internships");
 const studentRoutes = require("./routes/students");
@@ -35,6 +37,8 @@ app.use("/api/students/me/skills", skillRoutes);
 
 // Student profile routes
 app.use("/api/students", studentRoutes);
+// Resume routes
+app.use("/api/resumes", resumeRoutes);
 
 const PORT = process.env.PORT || 5000;
 
