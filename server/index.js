@@ -9,6 +9,7 @@ const applicationRoutes = require("./routes/applications");
 const healthRoutes = require("./routes/health");
 const internshipRoutes = require("./routes/internships");
 const studentRoutes = require("./routes/students");
+const skillRoutes = require("./routes/skills");
 
 dotenv.config();
 
@@ -25,6 +26,9 @@ app.use("/api/applications", applicationRoutes);
 
 // Internship routes, including eligibility check
 app.use("/api/internships", internshipRoutes);
+
+// Student skills routes (mounted before the profile routes)
+app.use("/api/students/me/skills", skillRoutes);
 
 // Student profile routes
 app.use("/api/students", studentRoutes);
