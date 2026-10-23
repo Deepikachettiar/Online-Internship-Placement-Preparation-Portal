@@ -37,10 +37,10 @@
 - Enforced that deactivated/inactive internships reject new student applications (applications.js) while existing applications remain visible.
 - Built CompanyInternships management table (client/src/pages/CompanyInternships.jsx) with inline edit and deactivate actions.
 
-## 2026-10-22 (browse internships with pagination)
+## 2026-10-22 (browse internships)
 - Added paginated browsing for issue #16: GET /api/internships with page and limit query params, filtering only Active listings from approved companies, sorted newest first.
 - Built BrowseInternships page (client/src/pages/BrowseInternships.jsx) with card list and pagination controls (Previous/Next, page counters).
 
-
-
-
+## 2026-10-23 (student skills)
+- Added student skills for issue #9: GET, POST, PUT and DELETE on /api/students/me/skills. Skills are trimmed, lowercased and stored as an array on the student. Duplicates and empty or unsafe values are rejected with 400. Added a skill tags section on the profile page (add, edit, delete).
+- Routes use req.user from the auth middleware, same as the profile routes.

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import SkillTags from "../components/SkillTags";
 
 export default function StudentProfile({ token }) {
   const [form, setForm] = useState({ department: "", graduationYear: "", cgpa: "" });
@@ -102,6 +103,8 @@ export default function StudentProfile({ token }) {
       </form>
       {message && <p role="status">{message}</p>}
       {error && <p role="alert">{error}</p>}
+
+      <SkillTags token={token} />
     </main>
   );
 }
