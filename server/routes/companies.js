@@ -21,6 +21,7 @@ router.get("/me", async (req, res) => {
 
     return res.status(200).json({ profile: company });
   } catch (error) {
+    console.error("Error retrieving company profile:", error);
     return res.status(500).json({ message: "Unable to load company profile." });
   }
 });
@@ -68,6 +69,7 @@ router.put("/me", async (req, res) => {
       profile: company,
     });
   } catch (error) {
+    console.error("Error updating company profile:", error);
     return res.status(500).json({ message: "Unable to update company profile." });
   }
 });
@@ -86,6 +88,7 @@ router.get("/:id", async (req, res) => {
 
     return res.status(200).json({ company });
   } catch (error) {
+    console.error("Error loading public company profile:", error);
     return res.status(500).json({ message: "Unable to load company." });
   }
 });

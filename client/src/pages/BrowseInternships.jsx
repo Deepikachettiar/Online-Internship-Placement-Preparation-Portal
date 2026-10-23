@@ -10,6 +10,7 @@ export default function BrowseInternships({ token: propToken }) {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [appliedMessage, setAppliedMessage] = useState("");
 
   // Search and filter states (issue #17)
   const [search, setSearch] = useState("");
@@ -17,52 +18,70 @@ export default function BrowseInternships({ token: propToken }) {
   const [location, setLocation] = useState("");
   const [workMode, setWorkMode] = useState("");
   const [minStipend, setMinStipend] = useState("");
+  const [activeFilters, setActiveFilters] = useState({
+    search: "",
+    skill: "",
+    location: "",
+    workMode: "",
+    minStipend: "",
+  });
 
   const limit = 6;
 
-  async function fetchInternships(targetPage = 1) {
-    try {
-      setLoading(true);
-      setError("");
-
-      const params = new URLSearchParams({
-        page: String(targetPage),
-        limit: String(limit),
-      });
-
-      if (search.trim()) params.set("search", search.trim());
-      if (skill.trim()) params.set("skill", skill.trim());
-      if (location.trim()) params.set("location", location.trim());
-      if (workMode) params.set("workMode", workMode);
-      if (minStipend) params.set("minStipend", minStipend);
-
-      const response = await fetch(`/api/internships?${params.toString()}`);
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to load internships.");
-      }
-      setInternships(data.internships || []);
-      setPage(data.page || 1);
-      setTotalPages(data.totalPages || 1);
-      setTotal(data.total || 0);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
   useEffect(() => {
-    fetchInternships(page);
-  }, [page]);
+    let active = true;
+
+    async function load() {
+      try {
+        setError("");
+        const params = new URLSearchParams({
+          page: String(page),
+          limit: String(limit),
+        });
+
+        if (activeFilters.search.trim()) params.set("search", activeFilters.search.trim());
+        if (activeFilters.skill.trim()) params.set("skill", activeFilters.skill.trim());
+        if (activeFilters.location.trim()) params.set("location", activeFilters.location.trim());
+        if (activeFilters.workMode) params.set("workMode", activeFilters.workMode);
+        if (activeFilters.minStipend) params.set("minStipend", activeFilters.minStipend);
+
+        const response = await fetch(`/api/internships?${params.toString()}`);
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to load internships.");
+        }
+        if (active) {
+          setInternships(data.internships || []);
+          setTotalPages(data.totalPages || 1);
+          setTotal(data.total || 0);
+        }
+      } catch (err) {
+        if (active) setError(err.message || "Failed to load internships.");
+      } finally {
+        if (active) setLoading(false);
+      }
+    }
+
+    void load().catch((err) => {
+      if (active) setError(err.message || "Failed to load internships.");
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [page, activeFilters]);
 
   function handleFilterSubmit(e) {
     e.preventDefault();
-    if (page === 1) {
-      fetchInternships(1);
-    } else {
-      setPage(1); // will trigger fetchInternships via useEffect
-    }
+    setLoading(true);
+    setPage(1);
+    setActiveFilters({
+      search,
+      skill,
+      location,
+      workMode,
+      minStipend,
+    });
   }
 
   function handleReset() {
@@ -71,11 +90,75 @@ export default function BrowseInternships({ token: propToken }) {
     setLocation("");
     setWorkMode("");
     setMinStipend("");
-    if (page === 1) {
-      fetchInternships(1);
-    } else {
-      setPage(1);
-    }
+    setLoading(true);
+    setPage(1);
+    setActiveFilters({
+      search: "",
+      skill: "",
+      location: "",
+      workMode: "",
+      minStipend: "",
+    });
+  }
+
+  let content;
+  if (loading) {
+    content = <p>Searching internships...</p>;
+  } else if (internships.length === 0) {
+    content = <p>No internships matched your search criteria. Try clearing some filters!</p>;
+  } else {
+    content = (
+      <div>
+        <p style={{ color: "#64748b", fontSize: "0.9rem" }}>
+          Found {total} internship{total === 1 ? "" : "s"} (Page {page} of {totalPages})
+        </p>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          {internships.map((internship) => (
+            <InternshipCard
+              key={internship._id}
+              internship={internship}
+              studentToken={token}
+              onApplied={() => {
+                setAppliedMessage("Application submitted successfully!");
+              }}
+            />
+          ))}
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "1rem",
+            marginTop: "2rem",
+          }}
+        >
+          <button
+            onClick={() => {
+              setLoading(true);
+              setPage((p) => Math.max(1, p - 1));
+            }}
+            disabled={page <= 1}
+          >
+            Previous
+          </button>
+          <span>
+            Page {page} of {totalPages}
+          </span>
+          <button
+            onClick={() => {
+              setLoading(true);
+              setPage((p) => Math.min(totalPages, p + 1));
+            }}
+            disabled={page >= totalPages}
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -168,58 +251,14 @@ export default function BrowseInternships({ token: propToken }) {
         </form>
       </section>
 
+      {appliedMessage && (
+        <output style={{ color: "green", display: "block", marginBottom: "1rem" }}>
+          {appliedMessage}
+        </output>
+      )}
       {error && <p role="alert" style={{ color: "red" }}>{error}</p>}
 
-      {loading ? (
-        <p>Searching internships...</p>
-      ) : internships.length === 0 ? (
-        <p>No internships matched your search criteria. Try clearing some filters!</p>
-      ) : (
-        <div>
-          <p style={{ color: "#64748b", fontSize: "0.9rem" }}>
-            Found {total} internship{total === 1 ? "" : "s"} (Page {page} of {totalPages})
-          </p>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            {internships.map((internship) => (
-              <InternshipCard
-                key={internship._id}
-                internship={internship}
-                studentToken={token}
-                onApplied={() => {
-                  alert("Application submitted successfully!");
-                }}
-              />
-            ))}
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: "1rem",
-              marginTop: "2rem",
-            }}
-          >
-            <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page <= 1}
-            >
-              Previous
-            </button>
-            <span>
-              Page {page} of {totalPages}
-            </span>
-            <button
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={page >= totalPages}
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )}
+      {content}
     </main>
   );
 }

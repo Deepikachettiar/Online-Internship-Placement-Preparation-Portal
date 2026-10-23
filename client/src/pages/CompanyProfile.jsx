@@ -51,7 +51,11 @@ export default function CompanyProfile({ token: propToken }) {
       }
     }
 
-    loadCompanyProfile();
+    void loadCompanyProfile().catch((err) => {
+      if (active) {
+        setError(err.message || "Unable to load company profile.");
+      }
+    });
     return () => {
       active = false;
     };
@@ -174,7 +178,7 @@ export default function CompanyProfile({ token: propToken }) {
         <button type="submit">Save Company Profile</button>
       </form>
 
-      {message && <p role="status" style={{ color: "green" }}>{message}</p>}
+      {message && <output style={{ color: "green", display: "block" }}>{message}</output>}
       {error && <p role="alert" style={{ color: "red" }}>{error}</p>}
     </main>
   );

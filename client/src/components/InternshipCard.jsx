@@ -75,7 +75,7 @@ export default function InternshipCard({ internship, studentToken, onApplied }) 
           <span style={{ fontSize: "0.85rem", color: "#718096" }}>Skills: </span>
           {internship.requiredSkills.map((skill, idx) => (
             <span
-              key={idx}
+              key={`${skill}-${idx}`}
               style={{
                 display: "inline-block",
                 background: "#e2e8f0",

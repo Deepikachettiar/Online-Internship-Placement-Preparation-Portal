@@ -1,6 +1,29 @@
 // Validates company profile fields.
 // Returns an error message or null if valid.
-function validateCompanyProfile({ companyName, companyDescription, location, industry, logoUrl, website }) {
+
+function validateUrlField(value, fieldLabel) {
+  if (value === undefined || value === "") {
+    return null;
+  }
+  if (typeof value !== "string") {
+    return `${fieldLabel} must be text.`;
+  }
+  try {
+    new URL(value);
+    return null;
+  } catch {
+    return `${fieldLabel} must be a valid URL.`;
+  }
+}
+
+function validateCompanyProfile({
+  companyName,
+  companyDescription,
+  location,
+  industry,
+  logoUrl,
+  website,
+}) {
   if (companyName !== undefined && (typeof companyName !== "string" || !companyName.trim())) {
     return "Company name cannot be empty.";
   }
@@ -17,23 +40,11 @@ function validateCompanyProfile({ companyName, companyDescription, location, ind
     return "Industry must be text.";
   }
 
-  if (logoUrl !== undefined && logoUrl !== "") {
-    if (typeof logoUrl !== "string") return "Logo URL must be text.";
-    try {
-      new URL(logoUrl);
-    } catch {
-      return "Logo URL must be a valid URL.";
-    }
-  }
+  const logoError = validateUrlField(logoUrl, "Logo URL");
+  if (logoError) return logoError;
 
-  if (website !== undefined && website !== "") {
-    if (typeof website !== "string") return "Website URL must be text.";
-    try {
-      new URL(website);
-    } catch {
-      return "Website URL must be a valid URL.";
-    }
-  }
+  const websiteError = validateUrlField(website, "Website URL");
+  if (websiteError) return websiteError;
 
   return null;
 }
