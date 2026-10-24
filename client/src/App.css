@@ -58,3 +58,63 @@ button:hover {
 p {
   line-height: 1.6;
 }
+
+/* Company registration form */
+.company-registration-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 520px;
+  margin-top: 24px;
+}
+
+.company-registration-form label {
+  display: block;
+  margin-top: 8px;
+  font-weight: 600;
+}
+
+.company-registration-form input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #1f2937;
+  font: inherit;
+}
+
+.company-registration-form input:focus {
+  outline: 2px solid #2563eb;
+  outline-offset: 1px;
+}
+
+.company-registration-form button {
+  align-self: flex-start;
+  margin-top: 16px;
+}
+
+.registration-success {
+  margin-top: 20px;
+  color: #166534;
+}
+
+.registration-error {
+  margin-top: 20px;
+  color: #b91c1c;
+}
+
+@media (max-width: 600px) {
+  #root {
+    padding: 1rem;
+  }
+
+  main {
+    padding: 1.25rem;
+  }
+
+  .company-registration-form {
+    max-width: 100%;
+  }
+}

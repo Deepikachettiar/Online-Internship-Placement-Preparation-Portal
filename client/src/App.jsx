@@ -1,12 +1,12 @@
-
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Routes, Route } from "react-router-dom";
 import axios from "axios";
 import LogoutButton from "./components/LogoutButton";
 import { getToken } from "./utils/auth";
+import CompanyRegistration from "./pages/CompanyRegistration";
 import "./App.css";
 
-function App() {
+function Home() {
   const [apiStatus, setApiStatus] = useState("Not checked");
   const [loggedIn, setLoggedIn] = useState(Boolean(getToken()));
 
@@ -23,7 +23,7 @@ function App() {
 
   return (
     <main>
-      <h1>Online Internship & Placement Preparation Portal</h1>
+      <h1>Online Internship &amp; Placement Preparation Portal</h1>
       <p>
         Your platform for internship opportunities and placement preparation.
       </p>
@@ -48,6 +48,18 @@ function App() {
         <p role="status">{apiStatus}</p>
       </section>
     </main>
+  );
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route
+        path="/company-register"
+        element={<CompanyRegistration />}
+      />
+    </Routes>
   );
 }
 
