@@ -1,0 +1,71 @@
+.student-layout {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.student-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: #ffffff;
+  color: #1f2937;
+}
+
+.student-header h1 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.student-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin: 0;
+}
+
+.student-nav a {
+  padding-bottom: 0.15rem;
+  border-bottom: 2px solid transparent;
+}
+
+.student-nav a.active {
+  color: #1d4ed8;
+  border-bottom-color: #1d4ed8;
+}
+
+.student-content {
+  margin-top: 1.5rem;
+}
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.dashboard-card {
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.dashboard-card strong {
+  display: block;
+  font-size: 1.75rem;
+  color: #1d4ed8;
+}
+
+.dashboard-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1rem 0 0;
+}
