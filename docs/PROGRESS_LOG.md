@@ -53,3 +53,8 @@
 ## 2026-10-24 (skills fix, issue #9)
 - Student skills routes were returning 401 even with a valid login, because nothing set req.user. Added an attachUser middleware (server/middleware/auth.js) that reads the token on every request and sets req.user, without blocking public routes. Added tests in server/attachUser.test.js.
 - Added a /api proxy to the Vite dev server (client/vite.config.js) so the pages that use relative API URLs reach the Express server.
+
+## 2026-10-24 (resume upload, issue #10)
+- Added resume upload and replace: POST and GET /api/students/me/resume (student role only). Accepts PDF only, max 5 MB, checks the file type, size and the PDF header, and keeps one file per student under server/uploads/resumes (not committed). The profile resumeUrl is saved on upload.
+- Added a Resume section on the profile page (client/src/components/ResumeUpload.jsx) with upload, replace and view. Added unit and API tests (utils/resume.test.js, studentResume.test.js).
+- Company access to an applicant resume will be handled with the applicant resume issue.

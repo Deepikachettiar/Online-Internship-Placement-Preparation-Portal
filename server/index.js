@@ -12,6 +12,7 @@ const internshipRoutes = require("./routes/internships");
 const studentRoutes = require("./routes/students");
 const skillRoutes = require("./routes/skills");
 const companyRoutes = require("./routes/companies");
+const studentResumeRoutes = require("./routes/studentResume");
 const { attachUser } = require("./middleware/auth");
 
 dotenv.config();
@@ -36,8 +37,9 @@ app.use("/api/applications", applicationRoutes);
 // Internship routes, including eligibility check
 app.use("/api/internships", internshipRoutes);
 
-// Student skills routes (mounted before the profile routes)
+// Student skills and resume routes (mounted before the profile routes)
 app.use("/api/students/me/skills", skillRoutes);
+app.use("/api/students/me/resume", studentResumeRoutes);
 
 // Student profile routes
 app.use("/api/students", studentRoutes);
