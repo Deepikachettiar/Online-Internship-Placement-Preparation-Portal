@@ -49,3 +49,7 @@
 ## 2026-10-23 (student skills)
 - Added student skills for issue #9: GET, POST, PUT and DELETE on /api/students/me/skills. Skills are trimmed, lowercased and stored as an array on the student. Duplicates and empty or unsafe values are rejected with 400. Added a skill tags section on the profile page (add, edit, delete).
 - Routes use req.user from the auth middleware, same as the profile routes.
+
+## 2026-10-24 (skills fix, issue #9)
+- Student skills routes were returning 401 even with a valid login, because nothing set req.user. Added an attachUser middleware (server/middleware/auth.js) that reads the token on every request and sets req.user, without blocking public routes. Added tests in server/attachUser.test.js.
+- Added a /api proxy to the Vite dev server (client/vite.config.js) so the pages that use relative API URLs reach the Express server.

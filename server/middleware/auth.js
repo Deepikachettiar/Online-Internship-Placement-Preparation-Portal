@@ -59,7 +59,36 @@ function authorizeRoles(...allowedRoles) {
   };
 }
 
+// Reads the token if one is sent and sets req.user. It never blocks the request,
+// so public routes keep working and routes that need a login still check req.user.
+function attachUser(req, res, next) {
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.startsWith("Bearer ")
+    ? authHeader.slice(7)
+    : null;
+
+  if (!token || !process.env.JWT_SECRET) {
+    return next();
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (decoded && typeof decoded === "object" && decoded.id) {
+      req.user = {
+        _id: decoded.id,
+        role: decoded.role,
+      };
+    }
+  } catch {
+    // Invalid or expired token: continue without a user.
+  }
+
+  next();
+}
+
 module.exports = {
   authenticateToken,
   authorizeRoles,
+  attachUser,
 };

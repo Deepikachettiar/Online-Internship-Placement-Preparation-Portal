@@ -12,6 +12,7 @@ const internshipRoutes = require("./routes/internships");
 const studentRoutes = require("./routes/students");
 const skillRoutes = require("./routes/skills");
 const companyRoutes = require("./routes/companies");
+const { attachUser } = require("./middleware/auth");
 
 dotenv.config();
 
@@ -19,6 +20,9 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+// Sets req.user from the login token (if any) for every route below
+app.use(attachUser);
 
 // Health check route
 app.use("/api/health", healthRoutes);
