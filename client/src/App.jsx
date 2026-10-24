@@ -4,6 +4,7 @@ import axios from "axios";
 import LogoutButton from "./components/LogoutButton";
 import { getToken } from "./utils/auth";
 import CompanyRegistration from "./pages/CompanyRegistration";
+import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import StudentLayout from "./components/StudentLayout";
 import StudentDashboard from "./pages/StudentDashboard";
@@ -63,18 +64,28 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
       <Route
         path="/company-register"
         element={<CompanyRegistration />}
       />
 
-      {/* Student area: needs a login with the student role */}
+      {/* Student area: requires login with the student role */}
       <Route element={<ProtectedRoute role="student" />}>
         <Route path="/student" element={<StudentLayout />}>
           <Route index element={<StudentDashboard />} />
-          <Route path="profile" element={<StudentProfile token={getToken()} />} />
-          <Route path="internships" element={<BrowseInternships token={getToken()} />} />
-          <Route path="applications" element={<MyApplications token={getToken()} />} />
+          <Route
+            path="profile"
+            element={<StudentProfile token={getToken()} />}
+          />
+          <Route
+            path="internships"
+            element={<BrowseInternships token={getToken()} />}
+          />
+          <Route
+            path="applications"
+            element={<MyApplications token={getToken()} />}
+          />
         </Route>
       </Route>
     </Routes>
