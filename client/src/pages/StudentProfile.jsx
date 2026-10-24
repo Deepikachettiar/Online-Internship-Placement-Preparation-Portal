@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import SkillTags from "../components/SkillTags";
+import ResumeUpload from "../components/ResumeUpload";
 
 export default function StudentProfile({ token }) {
   const [form, setForm] = useState({ department: "", graduationYear: "", cgpa: "" });
+  const [resumeUrl, setResumeUrl] = useState("");
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -28,6 +30,7 @@ export default function StudentProfile({ token }) {
             graduationYear: data.profile.graduationYear ?? "",
             cgpa: data.profile.cgpa ?? "",
           });
+          setResumeUrl(data.profile.resumeUrl || "");
         }
       } catch (err) {
         if (active) setError(err.message);
@@ -105,6 +108,12 @@ export default function StudentProfile({ token }) {
       {error && <p role="alert">{error}</p>}
 
       <SkillTags token={token} />
+
+      <ResumeUpload
+        token={token}
+        hasResume={Boolean(resumeUrl)}
+        onUploaded={setResumeUrl}
+      />
     </main>
   );
 }

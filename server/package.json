@@ -20,7 +20,8 @@
     "dotenv": "^18.0.8",
     "express": "^5.3.0",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.11.2"
+    "mongoose": "^9.11.2",
+    "multer": "^2.5.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.14",
@@ -29,5 +30,5 @@
   "_comment": "Merge only the seed entry into the existing package.json scripts object; preserve the existing scripts and dependencies.",
   "scripts_addition": {
     "seed": "node seed.js"
-}
+  }
 }
