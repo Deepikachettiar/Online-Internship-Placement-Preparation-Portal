@@ -9,6 +9,13 @@ export default function Applicants({ internshipId, token }) {
     let active = true;
 
     async function load() {
+      if (!internshipId) {
+        if (active) {
+          setError("An internship ID is required.");
+          setLoading(false);
+        }
+        return;
+      }
       try {
         const response = await fetch(`/api/internships/${internshipId}/applications`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -23,8 +30,7 @@ export default function Applicants({ internshipId, token }) {
       }
     }
 
-    if (internshipId) load();
-    else { setError("An internship ID is required."); setLoading(false); }
+    void load();
 
     return () => { active = false; };
   }, [internshipId, token]);

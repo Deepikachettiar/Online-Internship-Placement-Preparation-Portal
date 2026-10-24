@@ -1,4 +1,3 @@
-
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
@@ -12,6 +11,7 @@ const healthRoutes = require("./routes/health");
 const internshipRoutes = require("./routes/internships");
 const studentRoutes = require("./routes/students");
 const skillRoutes = require("./routes/skills");
+const companyRoutes = require("./routes/companies");
 
 dotenv.config();
 
@@ -39,6 +39,9 @@ app.use("/api/students/me/skills", skillRoutes);
 app.use("/api/students", studentRoutes);
 // Resume routes
 app.use("/api/resumes", resumeRoutes);
+
+// Company profile routes
+app.use("/api/companies", companyRoutes);
 
 const PORT = process.env.PORT || 5000;
 
