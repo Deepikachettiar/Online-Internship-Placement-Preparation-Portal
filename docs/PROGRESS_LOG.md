@@ -58,3 +58,7 @@
 - Added resume upload and replace: POST and GET /api/students/me/resume (student role only). Accepts PDF only, max 5 MB, checks the file type, size and the PDF header, and keeps one file per student under server/uploads/resumes (not committed). The profile resumeUrl is saved on upload.
 - Added a Resume section on the profile page (client/src/components/ResumeUpload.jsx) with upload, replace and view. Added unit and API tests (utils/resume.test.js, studentResume.test.js).
 - Company access to an applicant resume will be handled with the applicant resume issue.
+
+## 2026-10-24 (student dashboard shell, issue #11)
+- Added the student area under /student: shared layout with navigation (Dashboard, My Profile, Internships, My Applications, Logout), a dashboard page with application status counts and quick links, and a ProtectedRoute that sends visitors without a login to /login.
+- Routed the existing profile, browse internships and my applications pages inside the layout.
