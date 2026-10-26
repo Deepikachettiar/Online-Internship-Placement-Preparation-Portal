@@ -1,13 +1,18 @@
 import { useNavigate } from "react-router-dom";
-import { clearSession } from "../utils/auth";
+import useAuth from "../context/useAuth";
 
 export default function LogoutButton({ onLogout }) {
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   function handleLogout() {
-    clearSession();
-    if (onLogout) onLogout();
-    navigate("/login");
+    logout();
+
+    if (onLogout) {
+      onLogout();
+    }
+
+    navigate("/login", { replace: true });
   }
 
   return (

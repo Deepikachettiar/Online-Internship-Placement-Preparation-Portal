@@ -1,5 +1,7 @@
+
 const express = require("express");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 const router = express.Router();
@@ -29,6 +31,58 @@ function handleRegistrationError(error, res, type) {
     message: `Unable to register ${type.toLowerCase()}.`,
   });
 }
+
+// Login with JWT
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body || {};
+
+    if (!isNonEmptyString(email) ||
+        typeof password !== "string" ||
+        !password) {
+      return res.status(400).json({
+        message: "Email and password are required.",
+      });
+    }
+
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({
+        message: "Authentication is not configured.",
+      });
+    }
+
+    const user = await findExistingUser(email);
+
+    // Use the same response for unknown emails and incorrect passwords.
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(401).json({
+        message: "Invalid email or password.",
+      });
+    }
+
+    const token = jwt.sign(
+      { id: user._id.toString(), role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "4h" }
+    );
+
+    return res.status(200).json({
+      message: "Login successful.",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error("Login failed:", error.message);
+    return res.status(500).json({
+      message: "Unable to log in.",
+    });
+  }
+});
 
 // Student registration
 router.post("/register/student", async (req, res) => {
