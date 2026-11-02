@@ -2,9 +2,13 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
+<<<<<<< HEAD
+const applicationRoutes = require("./routes/applications");
+=======
 
 const applicationRoutes = require("./routes/applications");
 const authRoutes = require("./routes/auth");
+>>>>>>> origin/main
 const resumeRoutes = require("./routes/resumes");
 
 const healthRoutes = require("./routes/health");
@@ -37,6 +41,11 @@ app.use("/api/applications", applicationRoutes);
 // Internship routes, including eligibility check
 app.use("/api/internships", internshipRoutes);
 
+
+// Resume routes
+app.use("/api/resumes", resumeRoutes);
+
+
 // Student skills and resume routes (mounted before the profile routes)
 app.use("/api/students/me/skills", skillRoutes);
 app.use("/api/students/me/resume", studentResumeRoutes);
@@ -48,6 +57,7 @@ app.use("/api/resumes", resumeRoutes);
 
 // Company profile routes
 app.use("/api/companies", companyRoutes);
+
 
 const PORT = process.env.PORT || 5000;
 
