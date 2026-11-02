@@ -11,3 +11,54 @@
 ## 2026-10-21 (README setup steps)
 - Finalised the README setup steps after the scaffold was merged: prerequisites, folder structure, server and client setup, env variables and commands (issue #12).
 - Seed script and CI are not merged yet, so the README notes they will be added later.
+
+## 2026-10-22 (logout)
+- Added logout for issue #7: token helpers (client/src/utils/auth.js) and a Logout button that clears the saved token and goes to /login. The button shows in the nav only when a token exists.
+- The "protected calls return 401 after logout" check depends on the auth middleware from the login and RBAC issues.
+
+## 2026-10-22 (student profile)
+- Added the student academic profile for issue #8: GET and PUT /api/students/me, CGPA and graduation year validation (CGPA outside 0 to 10 returns 400), department, graduation year and CGPA fields on the User model, and a profile page (client/src/pages/StudentProfile.jsx).
+- Routes use req.user from the auth middleware, same as the profile routes. The page is not linked in the app yet because routing comes with the login issue and the dashboard shell issue.
+
+## 2026-10-22 (company profile)
+- Added company profile management for issue #13: GET and PUT /api/companies/me, GET /api/companies/:id for company details, companyDescription, logoUrl, location, industry, and website fields on the User model.
+- Added company profile validation (utils/companyValidation.js) with test suite.
+- Added company profile page (client/src/pages/CompanyProfile.jsx) and InternshipCard component with company information display.
+
+## 2026-10-22 (post an internship)
+- Added internship posting for issue #14: POST /api/internships, guarded by company role and approval check (unapproved company receives HTTP 403). New postings are saved as Active and visible to students.
+- Enhanced Internship model with stipend, duration, workMode, deadline, and compound text index.
+- Added payload validation (utils/internshipValidation.js) with comprehensive unit tests.
+- Added company listings route (GET /api/internships/company/me) and single listing route (GET /api/internships/:id).
+- Built PostInternship page (client/src/pages/PostInternship.jsx) with full listing configuration form.
+
+## 2026-10-22 (edit and deactivate internship)
+- Added editing and deactivation for issue #15: PUT /api/internships/:id (owner only check with payload validation) and PATCH /api/internships/:id/deactivate (sets status to Inactive).
+- Enforced that deactivated/inactive internships reject new student applications (applications.js) while existing applications remain visible.
+- Built CompanyInternships management table (client/src/pages/CompanyInternships.jsx) with inline edit and deactivate actions.
+
+## 2026-10-22 (browse internships)
+- Added paginated browsing for issue #16: GET /api/internships with page and limit query params, filtering only Active listings from approved companies, sorted newest first.
+- Built BrowseInternships page (client/src/pages/BrowseInternships.jsx) with card list and pagination controls (Previous/Next, page counters).
+
+## 2026-10-22 (search and filter internships)
+- Added search and multi-criteria filtering for issue #17: GET /api/internships supports search/q keyword, skill, location, workMode, and minStipend parameters.
+- Empty query returns all active roles; indexes on title, location, and requiredSkills ensure fast response times (< 1.5s).
+- Added interactive search bar and filter controls to BrowseInternships.jsx with filter clearing and pagination synchronization.
+
+## 2026-10-23 (student skills)
+- Added student skills for issue #9: GET, POST, PUT and DELETE on /api/students/me/skills. Skills are trimmed, lowercased and stored as an array on the student. Duplicates and empty or unsafe values are rejected with 400. Added a skill tags section on the profile page (add, edit, delete).
+- Routes use req.user from the auth middleware, same as the profile routes.
+
+## 2026-10-24 (skills fix, issue #9)
+- Student skills routes were returning 401 even with a valid login, because nothing set req.user. Added an attachUser middleware (server/middleware/auth.js) that reads the token on every request and sets req.user, without blocking public routes. Added tests in server/attachUser.test.js.
+- Added a /api proxy to the Vite dev server (client/vite.config.js) so the pages that use relative API URLs reach the Express server.
+
+## 2026-10-24 (resume upload, issue #10)
+- Added resume upload and replace: POST and GET /api/students/me/resume (student role only). Accepts PDF only, max 5 MB, checks the file type, size and the PDF header, and keeps one file per student under server/uploads/resumes (not committed). The profile resumeUrl is saved on upload.
+- Added a Resume section on the profile page (client/src/components/ResumeUpload.jsx) with upload, replace and view. Added unit and API tests (utils/resume.test.js, studentResume.test.js).
+- Company access to an applicant resume will be handled with the applicant resume issue.
+
+## 2026-10-24 (student dashboard shell, issue #11)
+- Added the student area under /student: shared layout with navigation (Dashboard, My Profile, Internships, My Applications, Logout), a dashboard page with application status counts and quick links, and a ProtectedRoute that sends visitors without a login to /login.
+- Routed the existing profile, browse internships and my applications pages inside the layout.

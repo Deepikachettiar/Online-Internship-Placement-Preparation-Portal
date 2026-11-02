@@ -20,6 +20,12 @@ router.post("/", async (req, res) => {
     const internship = await Internship.findById(internshipId);
     if (!internship) return res.status(404).json({ message: "Internship not found." });
 
+    if (internship.status && internship.status !== "Active") {
+      return res.status(400).json({
+        message: "This internship is no longer active and does not accept new applications.",
+      });
+    }
+
     const application = await Application.create({
       student: req.user._id,
       internship: internship._id,
