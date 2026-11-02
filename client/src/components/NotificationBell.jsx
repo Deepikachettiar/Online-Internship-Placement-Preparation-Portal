@@ -20,7 +20,25 @@ export default function NotificationBell() {
   }
 
   useEffect(() => {
-    refresh();
+    let ignore = false;
+    async function load() {
+      try {
+        const { data } = await axios.get("/api/notifications");
+        if (!ignore) {
+          setItems(data.notifications || []);
+          setUnreadCount(data.unreadCount || 0);
+          setError("");
+        }
+      } catch {
+        if (!ignore) {
+          setError("Notifications could not be loaded.");
+        }
+      }
+    }
+    load();
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   async function markRead(item) {

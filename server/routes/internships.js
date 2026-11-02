@@ -1,12 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const Internship = require("../models/Internship");
-
-const Application = require("../models/Application");
-
-// Company owners can view applicants for their own internship only.
-router.get("/:id/applications", async (req, res) => {
-
 const User = require("../models/User");
 const Application = require("../models/Application");
 const { checkEligibility } = require("../utils/eligibility");
@@ -324,34 +318,20 @@ router.get("/:id/applications", async (req, res) => {
 
 // Check eligibility (issue #18)
 router.get("/:id/eligibility", async (req, res) => {
-
   try {
     if (!req.user?._id) return res.status(401).json({ message: "Authentication required." });
 
-    const internship = await Internship.findById(req.params.id);
+    const [internship, studentUser] = await Promise.all([
+      Internship.findById(req.params.id),
+      User.findById(req.user._id).select("cgpa skills"),
+    ]);
+
     if (!internship) return res.status(404).json({ message: "Internship not found." });
 
-    const role = String(req.user.role || "").toLowerCase();
-    const isAdmin = role === "admin";
-    const ownerId = internship.company?._id || internship.company;
-    const isOwner = ownerId && String(ownerId) === String(req.user._id);
-
-    if (!isAdmin && !isOwner) {
-      return res.status(403).json({ message: "You cannot view applicants for this internship." });
-    }
-
-    const applications = await Application.find({ internship: internship._id })
-      .populate("student", "name email cgpa skills")
-      .sort({ createdAt: -1 });
-
-    return res.status(200).json({ internship, applications });
+    const studentProfile = studentUser || req.user;
+    const result = checkEligibility(studentProfile, internship);
+    return res.status(200).json(result);
   } catch (error) {
-
-    return res.status(500).json({ message: "Unable to load applicants." });
-  }
-});
-
-
     console.error("Unable to check eligibility:", error);
     return res.status(500).json({ message: "Unable to check eligibility." });
   }

@@ -62,3 +62,22 @@
 ## 2026-10-24 (student dashboard shell, issue #11)
 - Added the student area under /student: shared layout with navigation (Dashboard, My Profile, Internships, My Applications, Logout), a dashboard page with application status counts and quick links, and a ProtectedRoute that sends visitors without a login to /login.
 - Routed the existing profile, browse internships and my applications pages inside the layout.
+
+## 2026-11-02 (Sprint 3 & Mini-Project Deliverables Part-3)
+- Resolved merge conflict markers and route mounts in server/index.js; mounted notification routes (/api/notifications) and aptitude test routes (/api/tests).
+- Fixed ESLint React 19 hook warning in client/src/components/NotificationBell.jsx. Both client lint and build now pass with zero errors.
+- Completed Darshan Mali's assigned Sprint 2/3 tasks:
+  - Issue #33: Implemented auto-scoring engine (server/utils/scoring.js), TestHistory model (server/models/TestHistory.js), and aptitude test execution / preparation analytics routes (server/routes/tests.js). Added unit and API test suites.
+  - Issue #34: Executed response time performance check (server/tests/performance.test.js), verifying sub-millisecond execution for eligibility evaluations (< 1.5s SLA).
+  - Issue #35: Implemented concurrency and basic load check (server/tests/load.test.js), confirming 0.0% error rate and < 2.0s average latency across 100 simultaneous simulated requests.
+  - Issue #36: Conducted code structure and lint review (server/tests/codeStructure.test.js), verifying modular MVC separation and clean syntax across all models, routers, and utility components.
+  - Issue #37: Added data integrity test suite (server/tests/dataIntegrity.test.js) validating compound unique index on applications, schema enums, and referential constraints.
+  - Issue #38: Built comprehensive integration test suite for internships and search API (server/routes/internships.test.js).
+  - Also added test suites for company profile API (routes/companies.test.js), applications & status updates (routes/applications.test.js), student academic profile (routes/students.test.js), skills inventory (routes/skills.test.js), and in-portal notifications (tests/notifications.test.js).
+- Updated the formal Test Case Document (`docs/TEST_CASES.md`) based on the changes made during sprints.
+- Executed all automated tests: 106 tests across 24 test suites passing with 100% pass rate.
+- Generated all 4 required reports in `docs/`:
+  - Unit Test Report (`docs/UNIT_TEST_REPORT.md`)
+  - System Validation Report (`docs/SYSTEM_VALIDATION_REPORT.md`)
+  - Code Coverage Report (`docs/CODE_COVERAGE_REPORT.md`)
+  - Branch Coverage Report (`docs/BRANCH_COVERAGE_REPORT.md`)
