@@ -3,6 +3,7 @@ const router = express.Router();
 const AptitudeTest = require("../models/AptitudeTest");
 const Question = require("../models/Question");
 const TestHistory = require("../models/TestHistory");
+const TestAttempt = require("../models/TestAttempt");
 const { calculateTestScore } = require("../utils/scoring");
 
 function currentUserId(req) {
@@ -130,6 +131,51 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// Start an attempt: saves the server start time used by the countdown timer (OIP-F-021)
+router.post("/:id/start", async (req, res) => {
+  try {
+    const studentId = currentUserId(req);
+    if (!studentId) return res.status(401).json({ message: "Authentication required." });
+
+    const testDoc = await AptitudeTest.findById(req.params.id).select("durationMinutes isPublished").lean();
+    if (!testDoc || !testDoc.isPublished) {
+      return res.status(404).json({ message: "Aptitude test not found." });
+    }
+
+    const durationSeconds = (testDoc.durationMinutes || 30) * 60;
+
+    // Resume the running attempt if there is one, so a refresh does not reset the timer
+    let attempt = await TestAttempt.findOne({
+      student: studentId,
+      test: testDoc._id,
+      submittedAt: null,
+    });
+
+    if (attempt && Date.now() - new Date(attempt.startedAt).getTime() >= durationSeconds * 1000) {
+      // The old attempt already ran out, so close it and begin a new one
+      attempt.submittedAt = new Date();
+      await attempt.save();
+      attempt = null;
+    }
+
+    if (!attempt) {
+      attempt = await TestAttempt.create({ student: studentId, test: testDoc._id });
+    }
+
+    const elapsed = Math.floor((Date.now() - new Date(attempt.startedAt).getTime()) / 1000);
+
+    return res.status(201).json({
+      attemptId: attempt._id,
+      startedAt: attempt.startedAt,
+      durationSeconds,
+      remainingSeconds: Math.max(durationSeconds - elapsed, 0),
+    });
+  } catch (error) {
+    console.error("Failed to start test:", error);
+    return res.status(500).json({ message: "Unable to start test." });
+  }
+});
+
 // Submit a test attempt, auto-score, and save history (OIP-F-022)
 router.post("/:id/submit", async (req, res) => {
   try {
@@ -141,7 +187,21 @@ router.post("/:id/submit", async (req, res) => {
       return res.status(404).json({ message: "Aptitude test not found." });
     }
 
-    const { answers, timeSpentSeconds = 0 } = req.body;
+    const { answers } = req.body;
+    let timeSpentSeconds = Number(req.body.timeSpentSeconds) || 0;
+
+    // Close the running attempt and take the time from the server start time
+    const attempt = await TestAttempt.findOneAndUpdate(
+      { student: studentId, test: testDoc._id, submittedAt: null },
+      { submittedAt: new Date() },
+      { sort: { startedAt: -1 } }
+    );
+    if (attempt) {
+      const limit = (testDoc.durationMinutes || 30) * 60;
+      const spent = Math.round((Date.now() - new Date(attempt.startedAt).getTime()) / 1000);
+      timeSpentSeconds = Math.min(spent, limit);
+    }
+
     const evaluation = calculateTestScore(testDoc.questions, answers || {});
 
     const historyRecord = new TestHistory({
@@ -151,7 +211,7 @@ router.post("/:id/submit", async (req, res) => {
       totalQuestions: evaluation.totalQuestions,
       percentage: evaluation.percentage,
       passed: evaluation.passed,
-      timeSpentSeconds: Number(timeSpentSeconds) || 0,
+      timeSpentSeconds,
       answers: evaluation.answers,
       topicBreakdown: evaluation.topicBreakdown,
       strongTopics: evaluation.strongTopics,
