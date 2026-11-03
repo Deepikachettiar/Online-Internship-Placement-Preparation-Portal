@@ -81,3 +81,9 @@
   - System Validation Report (`docs/SYSTEM_VALIDATION_REPORT.md`)
   - Code Coverage Report (`docs/CODE_COVERAGE_REPORT.md`)
   - Branch Coverage Report (`docs/BRANCH_COVERAGE_REPORT.md`)
+
+## 2026-11-03 (aptitude test taking, issue #29)
+- Added POST /api/tests/:id/start which saves the server start time in a new TestAttempt model. Starting again while an attempt is running resumes it with the remaining time, so a page refresh does not reset the timer.
+- Submit now closes the running attempt and takes the time spent from the server start time (capped at the test duration).
+- Added the student pages Aptitude Tests (list) and Take Test: one question at a time, question palette, countdown timer from the server time, submit confirmation, and automatic submit at zero with inputs locked.
+- Added API tests for start, resume, unpublished test and server-side time spent.

@@ -11,6 +11,8 @@ import StudentDashboard from "./pages/StudentDashboard";
 import StudentProfile from "./pages/StudentProfile";
 import BrowseInternships from "./pages/BrowseInternships";
 import MyApplications from "./pages/MyApplications";
+import AptitudeTests from "./pages/AptitudeTests";
+import TakeTest from "./pages/TakeTest";
 import "./App.css";
 
 function Home() {
@@ -85,6 +87,14 @@ function App() {
           <Route
             path="applications"
             element={<MyApplications token={getToken()} />}
+          />
+          <Route
+            path="tests"
+            element={<AptitudeTests token={getToken()} />}
+          />
+          <Route
+            path="tests/:id"
+            element={<TakeTest token={getToken()} />}
           />
         </Route>
       </Route>

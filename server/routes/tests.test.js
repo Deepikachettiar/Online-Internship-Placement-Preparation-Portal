@@ -8,6 +8,7 @@ process.env.JWT_SECRET = "test-jwt-secret-tests-api";
 
 const AptitudeTest = require("../models/AptitudeTest");
 const TestHistory = require("../models/TestHistory");
+const TestAttempt = require("../models/TestAttempt");
 const testRoutes = require("./tests");
 const { attachUser } = require("../middleware/auth");
 
@@ -84,6 +85,8 @@ test("POST /api/tests/:id/submit evaluates answers and returns results (OIP-F-02
     populate: async () => sampleTest,
   });
 
+  TestAttempt.findOneAndUpdate = async () => null;
+
   // Mock TestHistory save
   TestHistory.prototype.save = async function () {
     this._id = "history_record_123";
@@ -137,4 +140,80 @@ test("GET /api/tests/analytics/me returns student aggregated preparation analyti
   assert.equal(res.body.totalAttempts, 1);
   assert.equal(res.body.overallAccuracy, 100);
   assert.ok(res.body.strongTopics.includes("Quant"));
+});
+
+test("POST /api/tests/:id/start requires login", async () => {
+  const res = await request(app).post(`/api/tests/${testId}/start`);
+  assert.equal(res.status, 401);
+});
+
+test("POST /api/tests/:id/start saves the server start time (OIP-F-021)", async () => {
+  AptitudeTest.findById = () => ({
+    select: () => ({ lean: async () => sampleTest }),
+  });
+  TestAttempt.findOne = async () => null;
+  let created = null;
+  TestAttempt.create = async (data) => {
+    created = data;
+    return { _id: "attempt1", startedAt: new Date(), ...data };
+  };
+
+  const res = await request(app)
+    .post(`/api/tests/${testId}/start`)
+    .set("Authorization", `Bearer ${studentToken}`);
+
+  assert.equal(res.status, 201);
+  assert.equal(created.student, studentId);
+  assert.equal(res.body.durationSeconds, 20 * 60);
+  assert.ok(res.body.remainingSeconds > 1190 && res.body.remainingSeconds <= 1200);
+});
+
+test("POST /api/tests/:id/start resumes a running attempt with the remaining time", async () => {
+  AptitudeTest.findById = () => ({
+    select: () => ({ lean: async () => sampleTest }),
+  });
+  TestAttempt.findOne = async () => ({
+    _id: "attempt2",
+    startedAt: new Date(Date.now() - 300 * 1000),
+  });
+
+  const res = await request(app)
+    .post(`/api/tests/${testId}/start`)
+    .set("Authorization", `Bearer ${studentToken}`);
+
+  assert.equal(res.status, 201);
+  assert.equal(res.body.attemptId, "attempt2");
+  assert.ok(res.body.remainingSeconds <= 900 && res.body.remainingSeconds > 890);
+});
+
+test("POST /api/tests/:id/start returns 404 for an unpublished test", async () => {
+  AptitudeTest.findById = () => ({
+    select: () => ({ lean: async () => ({ ...sampleTest, isPublished: false }) }),
+  });
+
+  const res = await request(app)
+    .post(`/api/tests/${testId}/start`)
+    .set("Authorization", `Bearer ${studentToken}`);
+  assert.equal(res.status, 404);
+});
+
+test("POST /api/tests/:id/submit takes the time spent from the server start time", async () => {
+  AptitudeTest.findById = () => ({ populate: async () => sampleTest });
+  TestAttempt.findOneAndUpdate = async () => ({
+    startedAt: new Date(Date.now() - 600 * 1000),
+  });
+  let saved = null;
+  TestHistory.prototype.save = async function () {
+    saved = this;
+    this._id = "history_2";
+    return this;
+  };
+
+  const res = await request(app)
+    .post(`/api/tests/${testId}/submit`)
+    .set("Authorization", `Bearer ${studentToken}`)
+    .send({ answers: { q1: "30" }, timeSpentSeconds: 1 });
+
+  assert.equal(res.status, 201);
+  assert.ok(saved.timeSpentSeconds >= 599 && saved.timeSpentSeconds <= 601);
 });
