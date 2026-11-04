@@ -20,6 +20,9 @@ export default function NotificationBell() {
   }
 
   useEffect(() => {
+docs/41-usability-check
+    refresh();
+
     let ignore = false;
     async function load() {
       try {
@@ -39,6 +42,7 @@ export default function NotificationBell() {
     return () => {
       ignore = true;
     };
+
   }, []);
 
   async function markRead(item) {
