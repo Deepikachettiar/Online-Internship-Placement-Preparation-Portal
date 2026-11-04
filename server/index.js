@@ -2,13 +2,10 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
-<<<<<<< HEAD
-const applicationRoutes = require("./routes/applications");
-=======
-
 const applicationRoutes = require("./routes/applications");
 const authRoutes = require("./routes/auth");
->>>>>>> origin/main
+const notificationRoutes = require("./routes/notifications");
+const testRoutes = require("./routes/tests");
 const resumeRoutes = require("./routes/resumes");
 
 const healthRoutes = require("./routes/health");
@@ -52,11 +49,15 @@ app.use("/api/students/me/resume", studentResumeRoutes);
 
 // Student profile routes
 app.use("/api/students", studentRoutes);
-// Resume routes
-app.use("/api/resumes", resumeRoutes);
 
 // Company profile routes
 app.use("/api/companies", companyRoutes);
+
+// Notification routes
+app.use("/api/notifications", notificationRoutes);
+
+// Aptitude test & preparation analytics routes
+app.use("/api/tests", testRoutes);
 
 
 const PORT = process.env.PORT || 5000;

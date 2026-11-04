@@ -13,6 +13,7 @@ export default function StudentLayout() {
           <NavLink to="/student/profile">My Profile</NavLink>
           <NavLink to="/student/internships">Internships</NavLink>
           <NavLink to="/student/applications">My Applications</NavLink>
+          <NavLink to="/student/tests">Aptitude Tests</NavLink>
           <LogoutButton />
         </nav>
       </header>

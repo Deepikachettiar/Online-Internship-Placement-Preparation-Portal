@@ -92,7 +92,8 @@ router.patch("/:id/status", async (req, res) => {
     // Get the authenticated user and company information
     const companyId =
       req.user?.companyId ||
-      req.user?.company?._id;
+      req.user?.company?._id ||
+      (req.user?.role === "company" ? req.user?._id : null);
 
     const internshipCompanyId =
       application.internship?.company?._id ||

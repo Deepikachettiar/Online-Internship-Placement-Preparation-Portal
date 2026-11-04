@@ -58,3 +58,25 @@ Source: SRS FRs OIP-F-001..024 and NFRs OIP-NF-001..008, plus setup, test and do
 | #42 | [OIP-NF-008] Browser and mobile check | Deepikachettiar | 2 |
 | #43 | [TEST] Application flow tests | Deepikachettiar | 3 |
 | #44 | [DOCS] Test summary report | Deepikachettiar | 2 |
+
+## Sprint 3 (2-6 Nov 2026) — Parallel Activity & Deliverables Part-3 Status
+
+| Issue | Title | Owner | Pts | Status | Evidence / Verification |
+|---|---|---|---|---|---|
+| #13 | [OIP-F-008] Company profile | darshan-mali-17 | 2 | Done | `routes/companies.js`, `routes/companies.test.js` |
+| #14 | [OIP-F-009] Post an internship | darshan-mali-17 | 3 | Done | `routes/internships.js`, `utils/internshipValidation.js` |
+| #15 | [OIP-F-010] Edit and deactivate internship | darshan-mali-17 | 2 | Done | `routes/internships.js`, `routes/internships.test.js` |
+| #16 | [OIP-F-011] Browse internships (paginated) | darshan-mali-17 | 3 | Done | `routes/internships.js`, `routes/internships.test.js` |
+| #17 | [OIP-F-012] Search and filter internships | darshan-mali-17 | 3 | Done | `routes/internships.js`, `routes/internships.test.js` |
+| #33 | [OIP-F-022] Auto scoring, results and test history | darshan-mali-17 | 3 | Done | `utils/scoring.js`, `models/TestHistory.js`, `routes/tests.js` |
+| #34 | [OIP-NF-001] Response time check | darshan-mali-17 | 2 | Done | `tests/performance.test.js` (< 1.5s SLA) |
+| #35 | [OIP-NF-004] Basic load check | darshan-mali-17 | 3 | Done | `tests/load.test.js` (100 concurrent requests, 0% errors) |
+| #36 | [OIP-NF-005] Code structure and lint review | darshan-mali-17 | 2 | Done | `tests/codeStructure.test.js` (Modular MVC, 0 lint errors) |
+| #37 | [OIP-NF-007] Data integrity checks | darshan-mali-17 | 2 | Done | `tests/dataIntegrity.test.js` (Compound unique index) |
+| #38 | [TEST] Internship and search API tests | darshan-mali-17 | 3 | Done | `routes/internships.test.js` (10/10 tests passing) |
+| — | [DELIV] Updated Test Cases Document | darshan-mali-17 | — | Done | `docs/TEST_CASES.md` |
+| — | [DELIV] Unit Test Report | darshan-mali-17 | — | Done | `docs/UNIT_TEST_REPORT.md` (106 tests passing) |
+| — | [DELIV] System Validation Report | darshan-mali-17 | — | Done | `docs/SYSTEM_VALIDATION_REPORT.md` (24 FRs, 8 NFRs, 6 SRs) |
+| — | [DELIV] Code Coverage Report | darshan-mali-17 | — | Done | `docs/CODE_COVERAGE_REPORT.md` (76.69% Lines, 96.2% Utils) |
+| — | [DELIV] Branch Coverage Report | darshan-mali-17 | — | Done | `docs/BRANCH_COVERAGE_REPORT.md` (75.91% Branches, 94.1% Auth) |
+

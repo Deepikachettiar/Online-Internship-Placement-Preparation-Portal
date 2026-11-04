@@ -31,6 +31,17 @@ Goal: notifications, admin, question bank, test engine, analytics, tests, NFR ch
 | Darshan R Mali | darshan-mali-17 | 6 | 15 |
 | Deepika K | Deepikachettiar | 6 | 15 |
 
+## Sprint 3: 2-6 Nov 2026 (Deliverables Part-3 & Parallel Testing)
+
+Goal: Finalise spill-overs, complete comprehensive testing according to the Test Plan, generate all verification and test reports, and update test documentation.
+
+| Member | GitHub | Focus & Deliverables |
+|---|---|---|
+| Darshan R Mali | darshan-mali-17 | Auto-scoring & TestHistory engine (#33), Performance (#34), Load (#35), Code structure audit (#36), Data integrity (#37), Internship & search API tests (#38), Unit Test Report, Code & Branch Coverage Reports |
+| Deepika K | Deepikachettiar | Application status workflow (#39), Notifications integration (#40), System Validation Report & test summary sign-off |
+| Dhanush Rao | dhanushrao-max | Test plan alignment, CI/CD pipeline verification, automated regression execution |
+| Gunavathi M | Guna-meda | Usability validation, accessibility verification, and student test navigation audit |
+
 ## Rules
 - One branch and one PR per issue. The assignee raises the PR, the repo owner reviews and merges.
 - CI must pass before merge.
