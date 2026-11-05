@@ -14,6 +14,7 @@ import MyApplications from "./pages/MyApplications";
 import AptitudeTests from "./pages/AptitudeTests";
 import TakeTest from "./pages/TakeTest";
 import Analytics from "./pages/Analytics";
+import AdminDashboard from "./pages/AdminDashboard";
 import "./App.css";
 
 function Home() {
@@ -73,7 +74,7 @@ function App() {
         element={<CompanyRegistration />}
       />
 
-      {/* Student area: requires login with the student role */}
+      {/* Student area */}
       <Route element={<ProtectedRoute role="student" />}>
         <Route path="/student" element={<StudentLayout />}>
           <Route index element={<StudentDashboard />} />
@@ -102,6 +103,11 @@ function App() {
             element={<Analytics token={getToken()} />}
           />
         </Route>
+      </Route>
+
+      {/* Admin area */}
+      <Route element={<ProtectedRoute role="admin" />}>
+        <Route path="/admin" element={<AdminDashboard />} />
       </Route>
     </Routes>
   );
