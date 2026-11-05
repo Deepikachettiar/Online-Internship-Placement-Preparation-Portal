@@ -1,11 +1,16 @@
+
 const express = require("express");
+const mongoose = require("mongoose");
 
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  res.status(200).json({
-    status: "ok",
-    message: "Online Internship Portal API is healthy",
+  const dbConnected = mongoose.connection.readyState === 1;
+
+  res.status(dbConnected ? 200 : 503).json({
+    status: dbConnected ? "ok" : "error",
+    message: "Online Internship Portal API health check",
+    database: dbConnected ? "connected" : "disconnected",
   });
 });
 

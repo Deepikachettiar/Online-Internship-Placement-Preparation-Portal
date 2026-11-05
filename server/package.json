@@ -1,3 +1,4 @@
+
 {
   "name": "server",
   "version": "1.0.0",
@@ -8,6 +9,7 @@
     "test:coverage": "node --test --experimental-test-coverage",
     "dev": "nodemon index.js",
     "start": "node index.js",
+    "backup": "node scripts/backup.js",
     "seed": "node seed.js",
     "build": "node --check index.js",
     "lint": "node --check index.js"
