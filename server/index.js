@@ -1,4 +1,3 @@
-
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
@@ -42,9 +41,6 @@ app.use("/api/applications", applicationRoutes);
 
 // Internships
 app.use("/api/internships", internshipRoutes);
-
-// Resumes
-app.use("/api/resumes", resumeRoutes);
 
 // Student routes
 app.use("/api/students/me/skills", skillRoutes);
