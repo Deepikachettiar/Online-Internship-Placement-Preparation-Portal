@@ -15,11 +15,22 @@ https://github.com/users/Guna-meda/projects/1
 
 Backlog, sprint plan and deviations are in the `docs/` folder.
 
-## Folder structure
+## Project structure
 ```
-client/   React app (Vite)
-server/   Express API (controllers, routes, models, middleware)
-docs/     Backlog, sprint plan, deviations, progress log, reference documents
+client/
+  src/
+    components/     Reusable UI elements (Navbar, Badges, NotificationBell, Cards)
+    context/        AuthContext and state management
+    pages/          Route views (Dashboard, Internships, TakeTest, Analytics, Profile)
+    utils/          Client-side token and authentication helpers
+server/
+  middleware/       JWT authentication (authenticateToken, attachUser) and RBAC guards
+  models/           Mongoose schemas (User, Internship, Application, Notification, AptitudeTest, Question, TestHistory, TestAttempt)
+  routes/           REST API routers (auth, internships, applications, companies, students, tests, notifications, health)
+  utils/            Validation and scoring engines (eligibility, scoring, resume, skills)
+  scripts/          Database maintenance and daily mongodump backup scripts
+  tests/            Performance, load, data integrity, and architectural test suites
+docs/               Backlog, sprint plans, test reports, deviations, and NFR documentation
 ```
 
 ## Prerequisites
