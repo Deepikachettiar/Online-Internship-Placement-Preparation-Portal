@@ -13,6 +13,7 @@ import BrowseInternships from "./pages/BrowseInternships";
 import MyApplications from "./pages/MyApplications";
 import AptitudeTests from "./pages/AptitudeTests";
 import TakeTest from "./pages/TakeTest";
+import Analytics from "./pages/Analytics";
 import "./App.css";
 
 function Home() {
@@ -95,6 +96,10 @@ function App() {
           <Route
             path="tests/:id"
             element={<TakeTest token={getToken()} />}
+          />
+          <Route
+            path="analytics"
+            element={<Analytics token={getToken()} />}
           />
         </Route>
       </Route>

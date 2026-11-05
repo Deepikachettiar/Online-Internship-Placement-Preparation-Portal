@@ -44,7 +44,8 @@ router.get("/analytics/me", async (req, res) => {
         categoryBreakdown: {},
         strongTopics: [],
         weakTopics: [],
-        attempts: [],
+        scoreHistory: [],
+        recentAttempts: [],
       });
     }
 
@@ -87,6 +88,17 @@ router.get("/analytics/me", async (req, res) => {
       categoryBreakdown,
       strongTopics,
       weakTopics,
+      // Oldest first, so the chart reads left to right (latest 20 attempts)
+      scoreHistory: attempts
+        .slice(0, 20)
+        .reverse()
+        .map((attempt) => ({
+          title: attempt.test?.title || "Aptitude test",
+          percentage: attempt.percentage ?? 0,
+          score: attempt.score,
+          totalQuestions: attempt.totalQuestions,
+          date: attempt.createdAt,
+        })),
       recentAttempts: attempts.slice(0, 5),
     });
   } catch (error) {

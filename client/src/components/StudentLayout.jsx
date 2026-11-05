@@ -14,6 +14,7 @@ export default function StudentLayout() {
           <NavLink to="/student/internships">Internships</NavLink>
           <NavLink to="/student/applications">My Applications</NavLink>
           <NavLink to="/student/tests">Aptitude Tests</NavLink>
+          <NavLink to="/student/analytics">My Analytics</NavLink>
           <LogoutButton />
         </nav>
       </header>

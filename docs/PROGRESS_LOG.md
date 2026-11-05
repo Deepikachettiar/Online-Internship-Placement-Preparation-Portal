@@ -87,3 +87,8 @@
 - Submit now closes the running attempt and takes the time spent from the server start time (capped at the test duration).
 - Added the student pages Aptitude Tests (list) and Take Test: one question at a time, question palette, countdown timer from the server time, submit confirmation, and automatic submit at zero with inputs locked.
 - Added API tests for start, resume, unpublished test and server-side time spent.
+
+## 2026-11-03 (student preparation analytics, issue #30)
+- The analytics endpoint (GET /api/tests/analytics/me) now also returns scoreHistory (latest 20 attempts, oldest first) for the chart, and returns the same fields in the empty case.
+- Added the My Analytics student page: score history bars, category breakdown table with Strong (75% or more), Average and Weak (below 50%) labels, and an empty state with a link to the tests.
+- Added API tests for the empty state and for strong and weak labels.

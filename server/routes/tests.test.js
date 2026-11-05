@@ -217,3 +217,66 @@ test("POST /api/tests/:id/submit takes the time spent from the server start time
   assert.equal(res.status, 201);
   assert.ok(saved.timeSpentSeconds >= 599 && saved.timeSpentSeconds <= 601);
 });
+
+test("GET /api/tests/analytics/me returns empty state when no tests are done (TC-AN-01)", async () => {
+  TestHistory.find = () => ({
+    populate: () => ({
+      sort: () => ({
+        lean: async () => [],
+      }),
+    }),
+  });
+
+  const res = await request(app)
+    .get("/api/tests/analytics/me")
+    .set("Authorization", `Bearer ${studentToken}`);
+
+  assert.equal(res.status, 200);
+  assert.equal(res.body.totalAttempts, 0);
+  assert.deepEqual(res.body.scoreHistory, []);
+});
+
+test("GET /api/tests/analytics/me labels strong and weak topics and lists score history", async () => {
+  const mockAttempts = [
+    {
+      score: 1,
+      totalQuestions: 4,
+      percentage: 25,
+      createdAt: new Date("2026-10-30"),
+      test: { title: "Test B" },
+      topicBreakdown: [
+        { topic: "Quant", totalQuestions: 2, correctAnswers: 2 },
+        { topic: "Verbal", totalQuestions: 2, correctAnswers: 0 },
+      ],
+    },
+    {
+      score: 2,
+      totalQuestions: 4,
+      percentage: 50,
+      createdAt: new Date("2026-10-28"),
+      test: { title: "Test A" },
+      topicBreakdown: [
+        { topic: "Quant", totalQuestions: 2, correctAnswers: 2 },
+        { topic: "Verbal", totalQuestions: 2, correctAnswers: 1 },
+      ],
+    },
+  ];
+
+  TestHistory.find = () => ({
+    populate: () => ({
+      sort: () => ({
+        lean: async () => mockAttempts,
+      }),
+    }),
+  });
+
+  const res = await request(app)
+    .get("/api/tests/analytics/me")
+    .set("Authorization", `Bearer ${studentToken}`);
+
+  assert.equal(res.status, 200);
+  assert.deepEqual(res.body.strongTopics, ["Quant"]);
+  assert.deepEqual(res.body.weakTopics, ["Verbal"]);
+  assert.equal(res.body.scoreHistory[0].title, "Test A");
+  assert.equal(res.body.scoreHistory[1].percentage, 25);
+});
