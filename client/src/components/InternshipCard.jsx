@@ -34,7 +34,7 @@ export default function InternshipCard({ internship, studentToken, onApplied }) 
           />
         )}
         <div>
-          <h3 style={{ margin: "0 0 0.25rem 0" }}>{internship.title}</h3>
+          <h2 style={{ margin: "0 0 0.25rem 0", fontSize: "1.17rem" }}>{internship.title}</h2>
           <p style={{ margin: 0, color: "#4a5568", fontSize: "0.95rem" }}>
             <strong>{companyDisplayName}</strong>
             {companyIndustry && ` • ${companyIndustry}`}
@@ -72,7 +72,7 @@ export default function InternshipCard({ internship, studentToken, onApplied }) 
 
       {Array.isArray(internship.requiredSkills) && internship.requiredSkills.length > 0 && (
         <div style={{ marginBottom: "0.75rem" }}>
-          <span style={{ fontSize: "0.85rem", color: "#718096" }}>Skills: </span>
+          <span style={{ fontSize: "0.85rem", color: "#4a5568" }}>Skills: </span>
           {internship.requiredSkills.map((skill, idx) => (
             <span
               key={`${skill}-${idx}`}
