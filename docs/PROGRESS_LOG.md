@@ -92,3 +92,6 @@
 - The analytics endpoint (GET /api/tests/analytics/me) now also returns scoreHistory (latest 20 attempts, oldest first) for the chart, and returns the same fields in the empty case.
 - Added the My Analytics student page: score history bars, category breakdown table with Strong (75% or more), Average and Weak (below 50%) labels, and an empty state with a link to the tests.
 - Added API tests for the empty state and for strong and weak labels.
+
+## 2026-11-05 (accessibility check, issue #31)
+- Ran axe-core on the login, internships and test pages. Fixed two colour contrast problems and one heading order problem on the internships page; all three pages now report no issues. Results are in docs/ACCESSIBILITY_CHECK.md.
