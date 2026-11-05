@@ -95,3 +95,8 @@
 
 ## 2026-11-05 (accessibility check, issue #31)
 - Ran axe-core on the login, internships and test pages. Fixed two colour contrast problems and one heading order problem on the internships page; all three pages now report no issues. Results are in docs/ACCESSIBILITY_CHECK.md.
+
+## 2026-11-05 (final docs pass, issue #32)
+- README: replaced the old seed and CI note with the seed command and demo logins, a short how-to-use section for students, companies and admin, a CI note and a docs index.
+- BACKLOG: added the status of #29-#32. DEVIATIONS: added the server-side timer, the unfinished admin issues (#24-#26) and the accessibility scope.
+- The 2 minute Sprint 2 demo video still has to be recorded and added to docs/ by the team.

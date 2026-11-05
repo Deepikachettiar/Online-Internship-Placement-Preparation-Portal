@@ -76,7 +76,36 @@ If the server stops with "MONGO_URI is missing" or cannot connect, make sure Mon
 | client | `npm run build` | Production build |
 | client | `npm run lint` | Run ESLint |
 
-Seed data (`npm run seed`) and the GitHub Actions CI workflow are separate issues; this section will be updated when they are merged.
+| server | `npm run seed` | Add demo users, internships, questions and a published test |
+| server | `npm run backup` | Back up the database (see Database Backup and Restore) |
+
+## Demo data and logins
+Run `npm run seed` in `server/` once MongoDB is running. It can be run again safely. All demo accounts use the password `DemoPass123!`.
+
+| Role | Email |
+|---|---|
+| Student | aarav@example.com (also diya@, ishaan@, meera@example.com) |
+| Company | northstar@example.com (also bluepeak@, orbit@example.com) |
+| Admin | admin@example.com |
+
+## How to use
+**Student** (log in at `/login`, you land on `/student`)
+1. My Profile: fill academic details, add skills and upload a PDF resume (max 5 MB).
+2. Internships: search and filter, check eligibility and apply.
+3. My Applications: follow the status of each application.
+4. Aptitude Tests: pick a published test and start it. The timer runs from the server start time, answers can be changed with the question palette, and the test is submitted automatically when time ends.
+5. My Analytics: see past scores and strong (75% or more) and weak (below 50%) topics.
+6. The bell icon shows in-portal notifications.
+
+**Company**: register at `/company-register`. The company profile, post internship and applicants pages are built, but they are not linked into the app routes yet, so for now company actions are available through the API only (`/api/companies`, `/api/internships`, `/api/applications`). Student registration works through the API (`/api/auth`); there is no student registration page yet, so use the seeded student accounts to log in.
+
+**Admin**: the admin account exists in the seed data. The admin question bank, test publishing and dashboard (issues #24, #25, #26) are not finished yet. The seeded test is already published so students can try the test flow.
+
+## Continuous integration
+The GitHub Actions workflow in `.github/workflows/ci.yml` installs the packages, runs lint, build and tests for client and server on every pull request.
+
+## Documentation
+All project documents are in `docs/`: backlog, sprint plan, progress log, deviations from the SRS/SAD/STP, test cases, test and coverage reports, and the NFR checks (response time, load, data integrity, code structure, usability, browser and mobile, accessibility). The Sprint 1 demo video is `docs/sprint 1 demo.mp4`.
 
 ## Workflow
 - One branch and one pull request per issue. The repo owner reviews and merges.
