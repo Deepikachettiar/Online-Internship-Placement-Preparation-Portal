@@ -28,7 +28,7 @@ app.get(
 
 const jwt = require("jsonwebtoken");
 
-test("rejects requests without a token", async () => {
+test("TC-SEC-02: rejects requests without a token", async () => {
   const response = await request(app).get("/protected");
 
   assert.equal(response.status, 401);
@@ -57,7 +57,7 @@ test("accepts a valid token and populates req.user", async () => {
   assert.equal(response.body.user.role, "student");
 });
 
-test("rejects a student from an admin-only route", async () => {
+test("TC-SEC-03: rejects a student from an admin-only route", async () => {
   const token = jwt.sign(
     { id: "student123", role: "student" },
     process.env.JWT_SECRET
