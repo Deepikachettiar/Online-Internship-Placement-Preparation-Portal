@@ -70,3 +70,32 @@ Seed data (`npm run seed`) and the GitHub Actions CI workflow are separate issue
 ## Workflow
 - One branch and one pull request per issue. The repo owner reviews and merges.
 - CI must pass before merging.
+
+## Database Backup and Restore
+
+### Prerequisites
+- MongoDB Database Tools installed (includes `mongodump` and `mongorestore`).
+- `MONGO_URI` configured in `server/.env`.
+
+### Create a database backup
+From the `server/` directory, run:
+```bash
+npm run backup
+```
+The backup is saved in `server/backups/` with a timestamped folder name. It contains BSON data and collection metadata.
+
+### Restore a database backup
+To restore a backup, use:
+```bash
+mongorestore --uri="<MONGO_URI>" --drop <BACKUP_PATH>
+```
+Replace `<MONGO_URI>` with your MongoDB connection string and `<BACKUP_PATH>` with the backup's database folder path.
+
+**Warning:** `--drop` deletes existing collections in the target database before restoring. Verify the target database and backup path before running this command.
+
+### Backup and restore verification
+A backup was successfully created and restored into a separate test database named `internship_portal_restore_test`.
+
+- Documents restored: 5
+- Failed documents: 0
+- Original database: unchanged
