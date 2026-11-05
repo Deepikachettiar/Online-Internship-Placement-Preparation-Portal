@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, Routes, Route } from "react-router-dom";
 import axios from "axios";
@@ -14,6 +15,7 @@ import MyApplications from "./pages/MyApplications";
 import AptitudeTests from "./pages/AptitudeTests";
 import TakeTest from "./pages/TakeTest";
 import Analytics from "./pages/Analytics";
+import AdminQuestions from "./pages/AdminQuestions";
 import "./App.css";
 
 function Home() {
@@ -73,7 +75,7 @@ function App() {
         element={<CompanyRegistration />}
       />
 
-      {/* Student area: requires login with the student role */}
+      {/* Student area */}
       <Route element={<ProtectedRoute role="student" />}>
         <Route path="/student" element={<StudentLayout />}>
           <Route index element={<StudentDashboard />} />
@@ -102,6 +104,14 @@ function App() {
             element={<Analytics token={getToken()} />}
           />
         </Route>
+      </Route>
+
+      {/* Admin question bank */}
+      <Route element={<ProtectedRoute role="admin" />}>
+        <Route
+          path="/admin/questions"
+          element={<AdminQuestions />}
+        />
       </Route>
     </Routes>
   );

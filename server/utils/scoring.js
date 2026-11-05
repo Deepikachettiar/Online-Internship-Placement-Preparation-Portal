@@ -1,5 +1,5 @@
 /**
- * Auto-scoring and topic diagnostics utility for Aptitude Assessments (OIP-F-022, OIP-F-023).
+ * Auto-scoring and topic diagnostics utility.
  */
 
 function normalizeAnswer(ans) {
@@ -7,12 +7,6 @@ function normalizeAnswer(ans) {
   return String(ans).trim().toLowerCase();
 }
 
-/**
- * Calculates student score, accuracy per topic, and categorizes strong/weak areas.
- * @param {Array} questions - Array of Question documents or plain objects.
- * @param {Object|Array} submittedAnswers - Map of questionId -> selected answer or array of { questionId, answer }.
- * @returns {Object} Test score results with detailed diagnostic breakdown.
- */
 function calculateTestScore(questions = [], submittedAnswers = {}) {
   if (!Array.isArray(questions) || questions.length === 0) {
     return {
@@ -27,11 +21,11 @@ function calculateTestScore(questions = [], submittedAnswers = {}) {
     };
   }
 
-  // Support both key-value object and array format for submittedAnswers
   const answerMap = new Map();
+
   if (Array.isArray(submittedAnswers)) {
     for (const item of submittedAnswers) {
-      if (item && item.questionId) {
+      if (item?.questionId) {
         answerMap.set(String(item.questionId), item.answer);
       }
     }
@@ -47,22 +41,34 @@ function calculateTestScore(questions = [], submittedAnswers = {}) {
 
   for (const q of questions) {
     const qid = String(q._id || q.id || "");
-    const selected = answerMap.get(qid) || "";
-    const correct = q.answer || "";
-    const topic = q.category || "General";
+    const selected = answerMap.get(qid) ?? "";
 
-    const isCorrect = normalizeAnswer(selected) !== "" && normalizeAnswer(selected) === normalizeAnswer(correct);
-    if (isCorrect) {
-      totalScore += 1;
-    }
+    const options = q.options || [];
+    const correctIndex = Number.isInteger(q.correctIndex)
+      ? q.correctIndex
+      : options.findIndex(
+          (option) => normalizeAnswer(option) === normalizeAnswer(q.answer)
+        );
+
+    const correct =
+      correctIndex >= 0 && options[correctIndex] !== undefined
+        ? options[correctIndex]
+        : q.answer || "";
+
+    const topic = q.topic || q.category || "General";
+
+    const isCorrect =
+      normalizeAnswer(selected) !== "" &&
+      normalizeAnswer(selected) === normalizeAnswer(correct);
+
+    if (isCorrect) totalScore += 1;
 
     if (!topicStats[topic]) {
       topicStats[topic] = { total: 0, correct: 0 };
     }
+
     topicStats[topic].total += 1;
-    if (isCorrect) {
-      topicStats[topic].correct += 1;
-    }
+    if (isCorrect) topicStats[topic].correct += 1;
 
     detailedAnswers.push({
       question: q._id || qid,
@@ -75,14 +81,17 @@ function calculateTestScore(questions = [], submittedAnswers = {}) {
 
   const totalQuestions = questions.length;
   const percentage = Number(((totalScore / totalQuestions) * 100).toFixed(2));
-  const passed = percentage >= 50.0;
+  const passed = percentage >= 50;
 
   const topicBreakdown = [];
   const strongTopics = [];
   const weakTopics = [];
 
   for (const [topic, stats] of Object.entries(topicStats)) {
-    const accuracy = Number(((stats.correct / stats.total) * 100).toFixed(2));
+    const accuracy = Number(
+      ((stats.correct / stats.total) * 100).toFixed(2)
+    );
+
     topicBreakdown.push({
       topic,
       totalQuestions: stats.total,
@@ -90,12 +99,8 @@ function calculateTestScore(questions = [], submittedAnswers = {}) {
       accuracy,
     });
 
-    // SRS OIP-F-023: Strong >= 75%, Weak < 50%
-    if (accuracy >= 75.0) {
-      strongTopics.push(topic);
-    } else if (accuracy < 50.0) {
-      weakTopics.push(topic);
-    }
+    if (accuracy >= 75) strongTopics.push(topic);
+    else if (accuracy < 50) weakTopics.push(topic);
   }
 
   return {
