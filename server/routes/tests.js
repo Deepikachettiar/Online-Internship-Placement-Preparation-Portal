@@ -15,11 +15,17 @@ function currentUserId(req) {
 router.get("/", async (req, res) => {
   try {
     const tests = await AptitudeTest.find({ isPublished: true })
-      .select("title description durationMinutes isPublished createdAt")
-      .sort({ createdAt: -1 })
+      .select("title description category durationMinutes isPublished createdAt questions")
+      .sort({ createdAt: 1 })
       .lean();
 
-    return res.status(200).json({ tests });
+    // Send how many questions a test has, not the question list itself
+    const list = tests.map(({ questions, ...test }) => ({
+      ...test,
+      questionCount: Array.isArray(questions) ? questions.length : 0,
+    }));
+
+    return res.status(200).json({ tests: list });
   } catch (error) {
     console.error("Failed to load aptitude tests:", error);
     return res.status(500).json({ message: "Unable to load aptitude tests." });

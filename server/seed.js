@@ -86,6 +86,12 @@ async function seed() {
     { category: "Verbal", question: "Choose the closest meaning of 'concise'.", options: ["Brief", "Confusing", "Lengthy", "Unclear"], answer: "Brief" },
     { category: "Verbal", question: "Choose the grammatically correct sentence.", options: ["She go to class", "She goes to class", "She going class", "She gone to class"], answer: "She goes to class" },
     { category: "Verbal", question: "Choose the opposite of 'expand'.", options: ["Increase", "Extend", "Contract", "Enlarge"], answer: "Contract" },
+    { category: "Quant", question: "A shop gives a 25% discount on a ₹800 shirt. What is the selling price?", options: ["₹500", "₹600", "₹650", "₹700"], answer: "₹600" },
+    { category: "Quant", question: "What is the simple interest on ₹5,000 at 10% per year for 2 years?", options: ["₹500", "₹1,000", "₹1,500", "₹2,000"], answer: "₹1,000" },
+    { category: "Quant", question: "What is the average of 10, 20, 30 and 40?", options: ["20", "25", "30", "35"], answer: "25" },
+    { category: "Quant", question: "6 workers finish a job in 10 days. How many days will 12 workers take?", options: ["3 days", "5 days", "15 days", "20 days"], answer: "5 days" },
+    { category: "Logical", question: "Find the next number: 1, 4, 9, 16, __.", options: ["20", "24", "25", "36"], answer: "25" },
+    { category: "Logical", question: "Tom is taller than Ria. Ria is taller than Sam. Who is the shortest?", options: ["Tom", "Ria", "Sam", "Cannot be told"], answer: "Sam" },
   ];
 
   const questionDocs = [];
@@ -98,22 +104,47 @@ async function seed() {
     questionDocs.push(saved);
   }
 
-  await AptitudeTest.findOneAndUpdate(
-    { title: "Sprint 1 Sample Aptitude Test" },
+  // Every test has exactly 5 questions. "questions" lists positions in questionData above.
+  const tests = [
     {
-      $set: {
-        title: "Sprint 1 Sample Aptitude Test",
-        description: "Published sample assessment covering Quant, Logical, and Verbal aptitude.",
-        questions: questionDocs.map((question) => question._id),
-        status: "published",
-        isPublished: true,
-        durationMinutes: 15,
-      },
+      title: "Sprint 1 Sample Aptitude Test",
+      description: "A quick mixed test with Quant, Logical and Verbal questions.",
+      category: "Mixed",
+      questions: [0, 1, 3, 4, 6],
     },
-    { upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
-  );
+    {
+      title: "Quantitative Aptitude Practice",
+      description: "Speed, percentages, interest, averages and work problems.",
+      category: "Quant",
+      questions: [2, 9, 10, 11, 12],
+    },
+    {
+      title: "Logical and Verbal Reasoning Practice",
+      description: "Series, deductions, grammar and vocabulary.",
+      category: "Logical and Verbal",
+      questions: [5, 13, 14, 7, 8],
+    },
+  ];
 
-  console.log("Seed complete: 1 admin, 4 students, 3 approved companies, 10 internships, 9 questions, 1 published test.");
+  for (const test of tests) {
+    await AptitudeTest.findOneAndUpdate(
+      { title: test.title },
+      {
+        $set: {
+          title: test.title,
+          description: test.description,
+          category: test.category,
+          questions: test.questions.map((index) => questionDocs[index]._id),
+          status: "published",
+          isPublished: true,
+          durationMinutes: 10,
+        },
+      },
+      { upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
+    );
+  }
+
+  console.log("Seed complete: 1 admin, 4 students, 3 approved companies, 10 internships, 15 questions, 3 published tests (5 questions each).");
 }
 
 seed()
