@@ -6,15 +6,26 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     password: { type: String, required: true },
     role: { type: String, enum: ["student", "company", "admin"], default: "student" },
+
     department: { type: String, default: "", trim: true },
     graduationYear: { type: Number },
     cgpa: { type: Number, default: 0, min: 0, max: 10 },
     skills: [{ type: String, trim: true }],
     resumeUrl: { type: String, default: "" },
+
     companyName: { type: String, default: "", trim: true },
     websiteDomain: { type: String, default: "", trim: true },
     contactDetails: { type: String, default: "", trim: true },
+
     companyApproved: { type: Boolean, default: false },
+    companyApprovalStatus: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
+    },
+
+    isActive: { type: Boolean, default: true },
+
     companyDescription: { type: String, default: "", trim: true },
     logoUrl: { type: String, default: "", trim: true },
     location: { type: String, default: "", trim: true },

@@ -15,6 +15,7 @@ import MyApplications from "./pages/MyApplications";
 import AptitudeTests from "./pages/AptitudeTests";
 import TakeTest from "./pages/TakeTest";
 import Analytics from "./pages/Analytics";
+import AdminDashboard from "./pages/AdminDashboard";
 import AdminQuestions from "./pages/AdminQuestions";
 import AdminTestConfiguration from "./pages/AdminTestConfiguration";
 import "./App.css";
@@ -109,6 +110,7 @@ function App() {
 
       {/* Admin area */}
       <Route element={<ProtectedRoute role="admin" />}>
+        <Route path="/admin" element={<AdminDashboard />} />
         <Route
           path="/admin/questions"
           element={<AdminQuestions />}
