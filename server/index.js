@@ -1,3 +1,4 @@
+
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
@@ -15,6 +16,8 @@ const skillRoutes = require("./routes/skills");
 const companyRoutes = require("./routes/companies");
 const studentResumeRoutes = require("./routes/studentResume");
 const adminRoutes = require("./routes/admin");
+const questionRoutes = require("./routes/questions");
+const adminTestRoutes = require("./routes/adminTests");
 
 const { attachUser } = require("./middleware/auth");
 
@@ -25,6 +28,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Authentication context
 app.use(attachUser);
 
 // Health check
@@ -52,6 +56,8 @@ app.use("/api/companies", companyRoutes);
 
 // Admin routes
 app.use("/api/admin", adminRoutes);
+app.use("/api/admin/questions", questionRoutes);
+app.use("/api/admin/tests", adminTestRoutes);
 
 // Notifications
 app.use("/api/notifications", notificationRoutes);

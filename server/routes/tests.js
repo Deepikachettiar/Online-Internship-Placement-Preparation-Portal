@@ -1,3 +1,4 @@
+
 const express = require("express");
 const router = express.Router();
 const AptitudeTest = require("../models/AptitudeTest");
@@ -125,14 +126,14 @@ router.get("/history/me", async (req, res) => {
   }
 });
 
-// Get a single test with questions (answers omitted during test attempt)
+// Get a single published test with questions (answers omitted during test attempt)
 router.get("/:id", async (req, res) => {
   try {
     const testDoc = await AptitudeTest.findById(req.params.id)
-      .populate("questions", "category question options")
+      .populate("questions", "category question stem topic options difficulty")
       .lean();
 
-    if (!testDoc) {
+    if (!testDoc || !testDoc.isPublished) {
       return res.status(404).json({ message: "Aptitude test not found." });
     }
 
@@ -195,7 +196,7 @@ router.post("/:id/submit", async (req, res) => {
     if (!studentId) return res.status(401).json({ message: "Authentication required." });
 
     const testDoc = await AptitudeTest.findById(req.params.id).populate("questions");
-    if (!testDoc) {
+    if (!testDoc || !testDoc.isPublished) {
       return res.status(404).json({ message: "Aptitude test not found." });
     }
 

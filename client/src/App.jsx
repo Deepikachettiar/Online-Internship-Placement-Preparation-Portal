@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, Routes, Route } from "react-router-dom";
 import axios from "axios";
@@ -15,6 +16,8 @@ import AptitudeTests from "./pages/AptitudeTests";
 import TakeTest from "./pages/TakeTest";
 import Analytics from "./pages/Analytics";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminQuestions from "./pages/AdminQuestions";
+import AdminTestConfiguration from "./pages/AdminTestConfiguration";
 import "./App.css";
 
 function Home() {
@@ -108,6 +111,14 @@ function App() {
       {/* Admin area */}
       <Route element={<ProtectedRoute role="admin" />}>
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route
+          path="/admin/questions"
+          element={<AdminQuestions />}
+        />
+        <Route
+          path="/admin/tests"
+          element={<AdminTestConfiguration />}
+        />
       </Route>
     </Routes>
   );
