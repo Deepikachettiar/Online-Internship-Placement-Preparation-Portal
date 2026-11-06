@@ -1,19 +1,23 @@
+
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
+
 const applicationRoutes = require("./routes/applications");
 const authRoutes = require("./routes/auth");
 const notificationRoutes = require("./routes/notifications");
 const testRoutes = require("./routes/tests");
 const resumeRoutes = require("./routes/resumes");
-
 const healthRoutes = require("./routes/health");
 const internshipRoutes = require("./routes/internships");
 const studentRoutes = require("./routes/students");
 const skillRoutes = require("./routes/skills");
 const companyRoutes = require("./routes/companies");
 const studentResumeRoutes = require("./routes/studentResume");
+const questionRoutes = require("./routes/questions");
+const adminTestRoutes = require("./routes/adminTests");
+
 const { attachUser } = require("./middleware/auth");
 
 dotenv.config();
@@ -23,42 +27,38 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Sets req.user from the login token (if any) for every route below
+// Authentication context
 app.use(attachUser);
 
-// Health check route
+// Health check
 app.use("/api/health", healthRoutes);
 
-// Authentication and student registration routes
+// Authentication
 app.use("/api/auth", authRoutes);
 
-// Application routes
+// Applications
 app.use("/api/applications", applicationRoutes);
 
-// Internship routes, including eligibility check
+// Internships
 app.use("/api/internships", internshipRoutes);
 
-
-// Resume routes
-app.use("/api/resumes", resumeRoutes);
-
-
-// Student skills and resume routes (mounted before the profile routes)
+// Student routes
 app.use("/api/students/me/skills", skillRoutes);
 app.use("/api/students/me/resume", studentResumeRoutes);
-
-// Student profile routes
 app.use("/api/students", studentRoutes);
 
-// Company profile routes
+// Company routes
 app.use("/api/companies", companyRoutes);
 
-// Notification routes
+// Admin routes
+app.use("/api/admin/questions", questionRoutes);
+app.use("/api/admin/tests", adminTestRoutes);
+
+// Notifications
 app.use("/api/notifications", notificationRoutes);
 
-// Aptitude test & preparation analytics routes
+// Aptitude tests and analytics
 app.use("/api/tests", testRoutes);
-
 
 const PORT = process.env.PORT || 5000;
 
