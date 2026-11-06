@@ -22,6 +22,10 @@ Where the SRS, SAD and STP disagree or where we build something different. The S
 | 16 | Folder layout and database | SAD/STP use src/ paths and MongoDB Atlas | client/ and server/ folders. Local MongoDB or Atlas | Simpler setup |
 | 17 | TLS | SAD: TLS everywhere. SRS: production only | HTTP in local development | SRS OIP-SR-004 |
 | 18 | Schedule | STP dates (testing from 5 Oct, UAT 20 Oct) | Follow the Part-2 sprint dates | Implementation had not started |
+| 19 | Test timer | SRS: time checked against the server start time | Start time is saved in a TestAttempt record; time spent is taken from it at submit; refreshing resumes the same timer | Stops the timer being changed from the browser (OIP-F-021) |
+| 20 | Admin features | SRS: admin question bank, test publishing and dashboard (OIP-F-019, 020, 024) | Not finished in Sprint 2 (issues #24, #25, #26). The seed script creates and publishes one test | Not completed before the freeze |
+| 21 | Accessibility check | SRS: full WCAG AA | axe-core run on the login, internships and test pages, with fixes (docs/ACCESSIBILITY_CHECK.md) | Scaled down, see row 13 |
+| 22 | Company screens and student registration page | SRS: company web screens | Company profile, post internship and applicants pages exist in client/src/pages but are not routed in App.jsx, and there is no student registration page. These actions work through the API | Not wired before the freeze |
 
 ## SRS section 4.4 extras (optional, if time allows)
 SRS 4.4 mentions things that the functional requirement OIP-F-009 does not list. We follow OIP-F-009 and add these only if time allows:

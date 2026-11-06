@@ -80,3 +80,13 @@ Source: SRS FRs OIP-F-001..024 and NFRs OIP-NF-001..008, plus setup, test and do
 | — | [DELIV] Code Coverage Report | darshan-mali-17 | — | Done | `docs/CODE_COVERAGE_REPORT.md` (76.69% Lines, 96.2% Utils) |
 | — | [DELIV] Branch Coverage Report | darshan-mali-17 | — | Done | `docs/BRANCH_COVERAGE_REPORT.md` (75.91% Branches, 94.1% Auth) |
 
+## Sprint 2 spill-over: Gunavathi M (Guna-meda)
+
+| Issue | Title | Pts | Status | Evidence |
+|---|---|---|---|---|
+| #29 | [OIP-F-021] Aptitude test taking with timer | 5 | Done | PR #75: `models/TestAttempt.js`, `routes/tests.js`, `pages/TakeTest.jsx` |
+| #30 | [OIP-F-023] Student preparation analytics | 3 | Done | PR #81: `routes/tests.js` (analytics), `pages/Analytics.jsx` |
+| #31 | [OIP-NF-006] Accessibility check | 3 | Done | PR #82: `docs/ACCESSIBILITY_CHECK.md` (axe, 0 issues on 3 pages) |
+| #32 | [DOCS] Final docs, Sprint 2 demo video and README pass | 2 | Docs done, demo video pending | README, BACKLOG, DEVIATIONS, PROGRESS_LOG updated |
+
+Not finished: #24, #25, #26 (admin question bank, test publishing, admin dashboard).
