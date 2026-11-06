@@ -1,3 +1,4 @@
+
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
@@ -15,6 +16,7 @@ const skillRoutes = require("./routes/skills");
 const companyRoutes = require("./routes/companies");
 const studentResumeRoutes = require("./routes/studentResume");
 const questionRoutes = require("./routes/questions");
+const adminTestRoutes = require("./routes/adminTests");
 
 const { attachUser } = require("./middleware/auth");
 
@@ -40,9 +42,6 @@ app.use("/api/applications", applicationRoutes);
 // Internships
 app.use("/api/internships", internshipRoutes);
 
-// Resumes
-app.use("/api/resumes", resumeRoutes);
-
 // Student routes
 app.use("/api/students/me/skills", skillRoutes);
 app.use("/api/students/me/resume", studentResumeRoutes);
@@ -51,8 +50,9 @@ app.use("/api/students", studentRoutes);
 // Company routes
 app.use("/api/companies", companyRoutes);
 
-// Admin question bank
+// Admin routes
 app.use("/api/admin/questions", questionRoutes);
+app.use("/api/admin/tests", adminTestRoutes);
 
 // Notifications
 app.use("/api/notifications", notificationRoutes);
