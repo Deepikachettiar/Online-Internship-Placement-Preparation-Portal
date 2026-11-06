@@ -100,3 +100,9 @@
 - README: replaced the old seed and CI note with the seed command and demo logins, a short how-to-use section for students, companies and admin, a CI note and a docs index.
 - BACKLOG: added the status of #29-#32. DEVIATIONS: added the server-side timer, the unfinished admin issues (#24-#26) and the accessibility scope.
 - The 2 minute Sprint 2 demo video still has to be recorded and added to docs/ by the team.
+
+## 2026-11-06 (demo readiness pass)
+- Pulled latest main. New blue and white look across the home, login, registration, student, company and admin pages with one shared top bar.
+- Added the missing student registration page, company dashboard/routes (post internship, listings, applicants with shortlist/select/reject) and role based redirects after login.
+- Fixed seed data (hashed passwords, valid internship status and deadline, one pending company) and added `npm run dev:db` for a local database without Docker.
+- Notifications are now created when a student applies and when a company changes an application status. Companies can open applicant resumes.

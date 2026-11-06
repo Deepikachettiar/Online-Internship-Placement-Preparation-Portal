@@ -244,7 +244,7 @@ export default function BrowseInternships({ token: propToken }) {
 
           <div style={{ display: "flex", gap: "0.75rem" }}>
             <button type="submit">Apply Search & Filters</button>
-            <button type="button" onClick={handleReset} style={{ background: "#475569" }}>
+            <button type="button" className="secondary" onClick={handleReset}>
               Clear All
             </button>
           </div>

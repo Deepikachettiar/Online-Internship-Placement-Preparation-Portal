@@ -1,27 +1,14 @@
-import { NavLink, Outlet } from "react-router-dom";
-import LogoutButton from "./LogoutButton";
-import "./StudentLayout.css";
+import AppShell from "./AppShell";
 
-// Shared header and navigation for every student page.
+const links = [
+  { to: "/student", label: "Dashboard", end: true },
+  { to: "/student/profile", label: "My Profile" },
+  { to: "/student/internships", label: "Internships" },
+  { to: "/student/applications", label: "My Applications" },
+  { to: "/student/tests", label: "Aptitude Tests" },
+  { to: "/student/analytics", label: "My Analytics" },
+];
+
 export default function StudentLayout() {
-  return (
-    <div className="student-layout">
-      <header className="student-header">
-        <h1>Internship &amp; Placement Portal</h1>
-        <nav className="student-nav" aria-label="Student navigation">
-          <NavLink to="/student" end>Dashboard</NavLink>
-          <NavLink to="/student/profile">My Profile</NavLink>
-          <NavLink to="/student/internships">Internships</NavLink>
-          <NavLink to="/student/applications">My Applications</NavLink>
-          <NavLink to="/student/tests">Aptitude Tests</NavLink>
-          <NavLink to="/student/analytics">My Analytics</NavLink>
-          <LogoutButton />
-        </nav>
-      </header>
-
-      <div className="student-content">
-        <Outlet />
-      </div>
-    </div>
-  );
+  return <AppShell links={links} home="/student" />;
 }

@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import AuthCard from "../components/AuthCard";
 
 export default function CompanyRegistration() {
   const [form, setForm] = useState({
@@ -26,7 +28,7 @@ export default function CompanyRegistration() {
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/auth/register/company`,
+        `${import.meta.env.VITE_API_URL || ""}/api/auth/register/company`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -60,9 +62,10 @@ export default function CompanyRegistration() {
   }
 
   return (
-    <main className="company-registration">
-      <h1>Company Registration</h1>
-      <p>Register your organisation to access the placement portal.</p>
+    <AuthCard
+      title="Company registration"
+      subtitle="Register your organisation. An admin approves your account before you can post internships."
+    >
 
       <form
         className="company-registration-form"
@@ -151,6 +154,9 @@ export default function CompanyRegistration() {
           {error}
         </p>
       )}
-    </main>
+      <p style={{ marginTop: "1rem" }}>
+        Already registered? <Link to="/login">Login</Link>
+      </p>
+    </AuthCard>
   );
 }

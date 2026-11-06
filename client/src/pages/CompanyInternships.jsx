@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { getToken } from "../utils/auth";
 
 export default function CompanyInternships({ token: propToken }) {
@@ -129,6 +130,7 @@ export default function CompanyInternships({ token: propToken }) {
         <section
           style={{
             border: "2px solid #3b82f6",
+            background: "#eff6ff",
             padding: "1rem",
             borderRadius: "6px",
             marginBottom: "1.5rem",
@@ -258,7 +260,15 @@ export default function CompanyInternships({ token: propToken }) {
                   </span>
                 </td>
                 <td style={{ padding: "0.75rem" }}>
+                  <Link
+                    className="btn"
+                    style={{ marginRight: "0.5rem", padding: "0.35rem 0.7rem", fontSize: "0.85rem" }}
+                    to={`/company/internships/${item._id}/applicants`}
+                  >
+                    Applicants
+                  </Link>
                   <button
+                    className="secondary"
                     onClick={() => startEdit(item)}
                     style={{ marginRight: "0.5rem" }}
                   >
@@ -266,8 +276,9 @@ export default function CompanyInternships({ token: propToken }) {
                   </button>
                   {item.status === "Active" && (
                     <button
+                      className="secondary"
                       onClick={() => handleDeactivate(item._id)}
-                      style={{ color: "#dc2626" }}
+                      style={{ color: "#b91c1c", borderColor: "#fca5a5" }}
                     >
                       Deactivate
                     </button>

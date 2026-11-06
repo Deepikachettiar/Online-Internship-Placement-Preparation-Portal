@@ -2,6 +2,14 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import useAuth from "../context/useAuth";
+import AuthCard from "../components/AuthCard";
+import { homeFor } from "../utils/auth";
+
+const DEMO = [
+  ["Student", "aarav@example.com"],
+  ["Company", "northstar@example.com"],
+  ["Admin", "admin@example.com"],
+];
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -19,17 +27,12 @@ export default function Login() {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/auth/login`,
+        `${import.meta.env.VITE_API_URL || ""}/api/auth/login`,
         { email, password }
       );
 
       login(response.data.token, response.data.user);
-
-      if (response.data.user.role === "student") {
-        navigate("/student", { replace: true });
-      } else {
-        navigate("/", { replace: true });
-      }
+      navigate(homeFor(response.data.user.role), { replace: true });
     } catch (err) {
       setError(
         err.response?.data?.message || "Unable to log in. Please try again."
@@ -40,9 +43,7 @@ export default function Login() {
   }
 
   return (
-    <main>
-      <h1>Login</h1>
-
+    <AuthCard title="Welcome back" subtitle="Log in to continue to your dashboard.">
       <form onSubmit={handleSubmit}>
         <label htmlFor="login-email">Email</label>
         <input
@@ -71,14 +72,30 @@ export default function Login() {
         </button>
       </form>
 
-      <p>
+      <p style={{ marginTop: "1rem" }}>
         New student? <Link to="/student-register">Register here</Link>
+        <br />
+        Company recruiter? <Link to="/company-register">Register your company</Link>
       </p>
 
-      <p>
-        Company recruiter?{" "}
-        <Link to="/company-register">Register your company</Link>
-      </p>
-    </main>
+      <div className="demo-box">
+        <strong>Demo accounts</strong> (password: DemoPass123!)
+        <div>
+          {DEMO.map(([label, mail]) => (
+            <button
+              type="button"
+              className="secondary"
+              key={mail}
+              onClick={() => {
+                setEmail(mail);
+                setPassword("DemoPass123!");
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </AuthCard>
   );
 }

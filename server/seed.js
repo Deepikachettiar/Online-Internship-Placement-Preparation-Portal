@@ -1,5 +1,6 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 const User = require("./models/User");
 const Internship = require("./models/Internship");
 const Question = require("./models/Question");
@@ -21,20 +22,23 @@ async function seed() {
     { name: "Meera Student", email: "meera@example.com", password: "DemoPass123!", role: "student", cgpa: 7.9, skills: ["HTML", "CSS", "React"] },
     { name: "Northstar Tech", email: "northstar@example.com", password: "DemoPass123!", role: "company", companyName: "Northstar Tech", companyApproved: true },
     { name: "Bluepeak Systems", email: "bluepeak@example.com", password: "DemoPass123!", role: "company", companyName: "Bluepeak Systems", companyApproved: true },
+    { name: "Zenith Software", email: "zenith@example.com", password: "DemoPass123!", role: "company", companyName: "Zenith Software", websiteDomain: "zenith.example", contactDetails: "hr@zenith.example", companyApproved: false },
     { name: "Orbit Labs", email: "orbit@example.com", password: "DemoPass123!", role: "company", companyName: "Orbit Labs", companyApproved: true },
   ];
 
   const userDocs = [];
   for (const user of users) {
+    const record = { ...user, password: await bcrypt.hash(user.password, 10) };
+    if (user.role === "company") record.companyApprovalStatus = user.companyApproved ? "approved" : "pending";
     const saved = await User.findOneAndUpdate(
       { email: user.email },
-      { $set: user },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
+      { $set: record },
+      { upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
     );
     userDocs.push(saved);
   }
 
-  const companies = userDocs.filter((user) => user.role === "company");
+  const companies = userDocs.filter((user) => user.role === "company" && user.companyApproved);
   const internships = [
     ["Frontend Developer Intern", "Build accessible React interfaces.", 7.0, ["JavaScript", "React"]],
     ["Backend Developer Intern", "Build REST APIs and services.", 7.5, ["Node.js", "SQL"]],
@@ -58,12 +62,16 @@ async function seed() {
         $set: {
           title, description, minCGPA, requiredSkills,
           company: company._id,
-          location: "Bengaluru",
-          status: "approved",
+          location: ["Bengaluru", "Hyderabad", "Chennai", "Pune"][index % 4],
+          workMode: ["On-site", "Remote", "Hybrid"][index % 3],
+          stipend: 10000 + (index % 5) * 5000,
+          duration: index % 2 === 0 ? "3 months" : "6 months",
+          deadline: new Date(Date.now() + (30 + index * 5) * 24 * 60 * 60 * 1000),
+          status: "Active",
           isPublished: true,
         },
       },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
+      { upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
     );
     internshipDocs.push(saved);
   }
@@ -85,7 +93,7 @@ async function seed() {
     const saved = await Question.findOneAndUpdate(
       { question: item.question },
       { $set: item },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
+      { upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
     );
     questionDocs.push(saved);
   }
@@ -102,7 +110,7 @@ async function seed() {
         durationMinutes: 15,
       },
     },
-    { upsert: true, new: true, setDefaultsOnInsert: true }
+    { upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
   );
 
   console.log("Seed complete: 1 admin, 4 students, 3 approved companies, 10 internships, 9 questions, 1 published test.");

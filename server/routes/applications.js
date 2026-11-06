@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const Application = require("../models/Application");
 const Internship = require("../models/Internship");
+const Notification = require("../models/Notification");
+const User = require("../models/User");
 
 // Submit an application (issue #19).
 router.post("/", async (req, res) => {
@@ -34,6 +36,20 @@ router.post("/", async (req, res) => {
       status: "Applied",
     });
 
+    // Tell the company about the new applicant (in-portal only).
+    try {
+      const student = await User.findById(req.user._id).select("name");
+      await Notification.create({
+        recipient: internship.company,
+        type: "NEW_APPLICATION",
+        title: "New application received",
+        message: `${student?.name || "A student"} applied for ${internship.title}.`,
+        relatedApplication: application._id,
+      });
+    } catch (notifyError) {
+      console.error("Could not create notification:", notifyError.message);
+    }
+
     return res.status(201).json({ message: "Application submitted successfully.", application });
   } catch (error) {
     if (error?.code === 11000) {
@@ -51,7 +67,11 @@ router.get("/me", async (req, res) => {
     }
 
     const applications = await Application.find({ student: req.user._id })
-      .populate("internship", "title company location")
+      .populate({
+        path: "internship",
+        select: "title company location",
+        populate: { path: "company", select: "companyName name" },
+      })
       .sort({ createdAt: -1 });
 
     return res.status(200).json({ applications });
@@ -124,6 +144,19 @@ router.patch("/:id/status", async (req, res) => {
     }
 
     await application.save();
+
+    // Tell the student about the decision (in-portal only).
+    try {
+      await Notification.create({
+        recipient: application.student,
+        type: "APPLICATION_STATUS_CHANGED",
+        title: "Application status updated",
+        message: `Your application for ${application.internship?.title || "an internship"} is now ${status}.`,
+        relatedApplication: application._id,
+      });
+    } catch (notifyError) {
+      console.error("Could not create notification:", notifyError.message);
+    }
 
     return res.status(200).json({
       message: "Application status updated successfully.",

@@ -45,7 +45,7 @@ export default function MyApplications({ token }) {
             {applications.map((application) => (
               <tr key={application._id}>
                 <td>{application.internship?.title || "Internship"}</td>
-                <td>{application.internship?.company || "—"}</td>
+                <td>{application.internship?.company?.companyName || application.internship?.company?.name || "—"}</td>
                 <td>{application.createdAt ? new Date(application.createdAt).toLocaleDateString() : "—"}</td>
                 <td><StatusBadge status={application.status} /></td>
               </tr>

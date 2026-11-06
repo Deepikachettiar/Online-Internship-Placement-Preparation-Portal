@@ -1,7 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { getToken } from "../utils/auth";
+import { getToken, homeFor } from "../utils/auth";
 
-// Reads the user saved at login (see utils/auth.js).
 function getSavedUser() {
   try {
     return JSON.parse(localStorage.getItem("user")) || null;
@@ -10,7 +9,7 @@ function getSavedUser() {
   }
 }
 
-// Sends visitors without a login to /login. Pass role="student" to limit a section to one role.
+// Sends visitors without a login to /login. Pass role to limit a section to one role.
 export default function ProtectedRoute({ role }) {
   if (!getToken()) {
     return <Navigate to="/login" replace />;
@@ -18,7 +17,7 @@ export default function ProtectedRoute({ role }) {
 
   const user = getSavedUser();
   if (role && user?.role !== role) {
-    return <Navigate to="/" replace />;
+    return <Navigate to={homeFor(user?.role)} replace />;
   }
 
   return <Outlet />;
