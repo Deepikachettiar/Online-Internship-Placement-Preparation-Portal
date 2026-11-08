@@ -106,7 +106,7 @@ Run `npm run seed` in `server/` once MongoDB is running. It can be run again saf
 The GitHub Actions workflow in `.github/workflows/ci.yml` installs the packages, runs lint, build and tests for client and server on every pull request.
 
 ## Documentation
-All project documents are in `docs/`: backlog, sprint plan, progress log, deviations from the SRS/SAD/STP, test cases, test and coverage reports, and the NFR checks (response time, load, data integrity, code structure, usability, browser and mobile, accessibility). The Sprint 1 demo video is `docs/sprint 1 demo.mp4`.
+All project documents are in `docs/`: backlog, sprint plan, progress log, deviations from the SRS/SAD/STP, test cases, test and coverage reports, and the NFR checks (response time, load, data integrity, code structure, usability, browser and mobile, accessibility). The demo videos are `docs/sprint 1 demo.mp4` and `docs/sprint 2 demo.mp4`.
 
 ## Workflow
 - One branch and one pull request per issue. The repo owner reviews and merges.

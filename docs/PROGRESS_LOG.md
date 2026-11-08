@@ -99,10 +99,15 @@
 ## 2026-11-05 (final docs pass, issue #32)
 - README: replaced the old seed and CI note with the seed command and demo logins, a short how-to-use section for students, companies and admin, a CI note and a docs index.
 - BACKLOG: added the status of #29-#32. DEVIATIONS: added the server-side timer, the unfinished admin issues (#24-#26) and the accessibility scope.
-- The 2 minute Sprint 2 demo video still has to be recorded and added to docs/ by the team.
+- The Sprint 2 demo video was recorded and added as docs/sprint 2 demo.mp4.
 
 ## 2026-11-06 (demo readiness pass)
 - Pulled latest main. New blue and white look across the home, login, registration, student, company and admin pages with one shared top bar.
 - Added the missing student registration page, company dashboard/routes (post internship, listings, applicants with shortlist/select/reject) and role based redirects after login.
 - Fixed seed data (hashed passwords, valid internship status and deadline, one pending company) and added `npm run dev:db` for a local database without Docker.
 - Notifications are now created when a student applies and when a company changes an application status. Companies can open applicant resumes.
+
+## 2026-11-07 (expired login fix)
+- Fixed "Invalid or expired token" on the student profile: login tokens last 4 hours, and the old token stayed in the browser. Any 401 from the API now clears the saved login and sends the user to /login.
+- Small mobile fix so long headings and inputs stay inside the card.
+- Added the Sprint 2 demo video as `docs/sprint 2 demo.mp4` and linked it in the README. Issue #32 is now complete.
