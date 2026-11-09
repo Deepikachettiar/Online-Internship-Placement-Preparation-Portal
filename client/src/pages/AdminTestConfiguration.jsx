@@ -55,6 +55,7 @@ function AdminTestConfiguration() {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadData();
     // Load data when the page is opened.
     // eslint-disable-next-line react-hooks/exhaustive-deps

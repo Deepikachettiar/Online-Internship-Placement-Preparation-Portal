@@ -87,6 +87,6 @@ Source: SRS FRs OIP-F-001..024 and NFRs OIP-NF-001..008, plus setup, test and do
 | #29 | [OIP-F-021] Aptitude test taking with timer | 5 | Done | PR #75: `models/TestAttempt.js`, `routes/tests.js`, `pages/TakeTest.jsx` |
 | #30 | [OIP-F-023] Student preparation analytics | 3 | Done | PR #81: `routes/tests.js` (analytics), `pages/Analytics.jsx` |
 | #31 | [OIP-NF-006] Accessibility check | 3 | Done | PR #82: `docs/ACCESSIBILITY_CHECK.md` (axe, 0 issues on 3 pages) |
-| #32 | [DOCS] Final docs, Sprint 2 demo video and README pass | 2 | Docs done, demo video pending | README, BACKLOG, DEVIATIONS, PROGRESS_LOG updated |
+| #32 | [DOCS] Final docs, Sprint 2 demo video and README pass | 2 | Done | README, BACKLOG, DEVIATIONS, PROGRESS_LOG updated |
 
 Not finished: #24, #25, #26 (admin question bank, test publishing, admin dashboard).

@@ -104,15 +104,40 @@ export default function TakeTest({ token }) {
 
   if (result) {
     return (
-      <main>
-        <h1>Test submitted</h1>
-        <p role="status">
-          Your score: {result.score} / {result.totalQuestions} ({result.percentage}%)
-          {" "}- {result.passed ? "Passed" : "Not passed"}
-        </p>
-        <Link to="/student/analytics">View my analytics</Link>
-        {" | "}
-        <Link to="/student/tests">Back to tests</Link>
+      <main className="test-page">
+        <div className="result-card">
+          <p className="result-label">Test submitted</p>
+          <div className="result-score">
+            {result.score}
+            <span> / {result.totalQuestions}</span>
+          </div>
+          <p className="result-percent">{result.percentage}%</p>
+          <span className={`result-pill ${result.passed ? "pass" : "fail"}`}>
+            {result.passed ? "Passed" : "Not passed"}
+          </span>
+        </div>
+
+        {result.topicBreakdown?.length > 0 && (
+          <div className="result-topics">
+            <h2>By topic</h2>
+            {result.topicBreakdown.map((item) => (
+              <div key={item.topic} className="topic-row">
+                <span>{item.topic}</span>
+                <div className="topic-bar">
+                  <span style={{ width: `${item.accuracy}%` }} />
+                </div>
+                <span>
+                  {item.correctAnswers}/{item.totalQuestions}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="test-actions">
+          <Link to="/student/analytics" className="btn">View my analytics</Link>
+          <Link to="/student/tests" className="btn btn-secondary">Back to tests</Link>
+        </div>
       </main>
     );
   }
@@ -130,77 +155,110 @@ export default function TakeTest({ token }) {
   const question = questions[current];
   const locked = submitting || secondsLeft === 0;
   const answeredCount = Object.keys(answers).length;
+  const isLast = current === questions.length - 1;
 
   return (
-    <main>
-      <h1>{test.title}</h1>
-      <p role="timer" aria-live="off">
-        Time left: <strong>{formatTime(secondsLeft)}</strong>
-      </p>
+    <main className="test-page">
+      <div className="test-head">
+        <div>
+          <h1>{test.title}</h1>
+          <p>
+            {answeredCount} of {questions.length} answered
+          </p>
+        </div>
+        <div
+          className={`test-timer${secondsLeft <= 60 ? " low" : ""}`}
+          role="timer"
+          aria-live="off"
+        >
+          {formatTime(secondsLeft)}
+        </div>
+      </div>
+
+      <div className="test-progress" aria-hidden="true">
+        <span style={{ width: `${(answeredCount / questions.length) * 100}%` }} />
+      </div>
+
       {secondsLeft === 0 && <p role="alert">Time is up. Submitting your answers...</p>}
 
-      <nav aria-label="Question palette">
+      <div className="test-palette" aria-label="Question palette">
         {questions.map((item, index) => (
           <button
             key={item._id}
             type="button"
             onClick={() => setCurrent(index)}
             disabled={submitting}
+            className={`q-dot${index === current ? " current" : ""}${answers[item._id] ? " done" : ""}`}
             aria-current={index === current ? "true" : undefined}
             aria-label={`Question ${index + 1}${answers[item._id] ? ", answered" : ""}`}
           >
-            {index + 1}{answers[item._id] ? " (done)" : ""}
+            {index + 1}
           </button>
         ))}
-      </nav>
+      </div>
 
-      <fieldset disabled={locked}>
-        <legend>
-          Question {current + 1} of {questions.length} ({question.category})
-        </legend>
-        <p>{question.question}</p>
-        {question.options.map((option) => (
-          <label key={option} style={{ display: "block" }}>
-            <input
-              type="radio"
-              name={`question-${question._id}`}
-              value={option}
-              checked={answers[question._id] === option}
-              onChange={() => setAnswers({ ...answers, [question._id]: option })}
-            />
-            {" "}{option}
-          </label>
-        ))}
-      </fieldset>
+      <div className="q-card">
+        <p className="q-meta">
+          Question {current + 1} of {questions.length}
+          {question.category && <span className="test-tag">{question.category}</span>}
+        </p>
+        <h2 className="q-text">{question.question}</h2>
 
-      <p>
-        <button type="button" onClick={() => setCurrent(current - 1)} disabled={current === 0 || submitting}>
-          Previous
-        </button>
-        {" "}
+        <div className="q-options" role="radiogroup" aria-label="Answer options">
+          {question.options.map((option) => (
+            <label
+              key={option}
+              className={`option${answers[question._id] === option ? " selected" : ""}`}
+            >
+              <input
+                type="radio"
+                name={`question-${question._id}`}
+                value={option}
+                disabled={locked}
+                checked={answers[question._id] === option}
+                onChange={() => setAnswers({ ...answers, [question._id]: option })}
+              />
+              <span>{option}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div className="test-actions between">
         <button
           type="button"
-          onClick={() => setCurrent(current + 1)}
-          disabled={current === questions.length - 1 || submitting}
+          className="btn-secondary"
+          onClick={() => setCurrent(current - 1)}
+          disabled={current === 0 || submitting}
         >
-          Next
+          Previous
         </button>
-        {" "}
-        <button type="button" onClick={() => setConfirming(true)} disabled={locked}>
-          Submit test
-        </button>
-      </p>
+        {isLast ? (
+          <button type="button" onClick={() => setConfirming(true)} disabled={locked}>
+            Submit test
+          </button>
+        ) : (
+          <button type="button" onClick={() => setCurrent(current + 1)} disabled={submitting}>
+            Next
+          </button>
+        )}
+      </div>
 
       {confirming && (
-        <div role="alertdialog" aria-labelledby="confirm-title" aria-modal="true">
-          <h2 id="confirm-title">Submit the test?</h2>
-          <p>
-            You answered {answeredCount} of {questions.length} questions. You cannot change
-            your answers after submitting.
-          </p>
-          <button type="button" onClick={submitTest}>Yes, submit</button>
-          {" "}
-          <button type="button" onClick={() => setConfirming(false)}>Keep working</button>
+        <div className="modal-backdrop">
+          <div className="modal" role="alertdialog" aria-labelledby="confirm-title" aria-modal="true">
+            <h2 id="confirm-title">Submit the test?</h2>
+            <p>
+              You answered {answeredCount} of {questions.length} questions. You cannot change
+              your answers after submitting.
+            </p>
+            <div className="test-actions">
+              <button type="button" onClick={submitTest}>Yes, submit</button>
+              <button type="button" className="btn-secondary" onClick={() => setConfirming(false)}>
+                Keep working
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </main>

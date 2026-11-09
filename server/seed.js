@@ -1,5 +1,6 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 const User = require("./models/User");
 const Internship = require("./models/Internship");
 const Question = require("./models/Question");
@@ -21,20 +22,23 @@ async function seed() {
     { name: "Meera Student", email: "meera@example.com", password: "DemoPass123!", role: "student", cgpa: 7.9, skills: ["HTML", "CSS", "React"] },
     { name: "Northstar Tech", email: "northstar@example.com", password: "DemoPass123!", role: "company", companyName: "Northstar Tech", companyApproved: true },
     { name: "Bluepeak Systems", email: "bluepeak@example.com", password: "DemoPass123!", role: "company", companyName: "Bluepeak Systems", companyApproved: true },
+    { name: "Zenith Software", email: "zenith@example.com", password: "DemoPass123!", role: "company", companyName: "Zenith Software", websiteDomain: "zenith.example", contactDetails: "hr@zenith.example", companyApproved: false },
     { name: "Orbit Labs", email: "orbit@example.com", password: "DemoPass123!", role: "company", companyName: "Orbit Labs", companyApproved: true },
   ];
 
   const userDocs = [];
   for (const user of users) {
+    const record = { ...user, password: await bcrypt.hash(user.password, 10) };
+    if (user.role === "company") record.companyApprovalStatus = user.companyApproved ? "approved" : "pending";
     const saved = await User.findOneAndUpdate(
       { email: user.email },
-      { $set: user },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
+      { $set: record },
+      { upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
     );
     userDocs.push(saved);
   }
 
-  const companies = userDocs.filter((user) => user.role === "company");
+  const companies = userDocs.filter((user) => user.role === "company" && user.companyApproved);
   const internships = [
     ["Frontend Developer Intern", "Build accessible React interfaces.", 7.0, ["JavaScript", "React"]],
     ["Backend Developer Intern", "Build REST APIs and services.", 7.5, ["Node.js", "SQL"]],
@@ -58,12 +62,16 @@ async function seed() {
         $set: {
           title, description, minCGPA, requiredSkills,
           company: company._id,
-          location: "Bengaluru",
-          status: "approved",
+          location: ["Bengaluru", "Hyderabad", "Chennai", "Pune"][index % 4],
+          workMode: ["On-site", "Remote", "Hybrid"][index % 3],
+          stipend: 10000 + (index % 5) * 5000,
+          duration: index % 2 === 0 ? "3 months" : "6 months",
+          deadline: new Date(Date.now() + (30 + index * 5) * 24 * 60 * 60 * 1000),
+          status: "Active",
           isPublished: true,
         },
       },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
+      { upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
     );
     internshipDocs.push(saved);
   }
@@ -78,6 +86,12 @@ async function seed() {
     { category: "Verbal", question: "Choose the closest meaning of 'concise'.", options: ["Brief", "Confusing", "Lengthy", "Unclear"], answer: "Brief" },
     { category: "Verbal", question: "Choose the grammatically correct sentence.", options: ["She go to class", "She goes to class", "She going class", "She gone to class"], answer: "She goes to class" },
     { category: "Verbal", question: "Choose the opposite of 'expand'.", options: ["Increase", "Extend", "Contract", "Enlarge"], answer: "Contract" },
+    { category: "Quant", question: "A shop gives a 25% discount on a ₹800 shirt. What is the selling price?", options: ["₹500", "₹600", "₹650", "₹700"], answer: "₹600" },
+    { category: "Quant", question: "What is the simple interest on ₹5,000 at 10% per year for 2 years?", options: ["₹500", "₹1,000", "₹1,500", "₹2,000"], answer: "₹1,000" },
+    { category: "Quant", question: "What is the average of 10, 20, 30 and 40?", options: ["20", "25", "30", "35"], answer: "25" },
+    { category: "Quant", question: "6 workers finish a job in 10 days. How many days will 12 workers take?", options: ["3 days", "5 days", "15 days", "20 days"], answer: "5 days" },
+    { category: "Logical", question: "Find the next number: 1, 4, 9, 16, __.", options: ["20", "24", "25", "36"], answer: "25" },
+    { category: "Logical", question: "Tom is taller than Ria. Ria is taller than Sam. Who is the shortest?", options: ["Tom", "Ria", "Sam", "Cannot be told"], answer: "Sam" },
   ];
 
   const questionDocs = [];
@@ -85,27 +99,52 @@ async function seed() {
     const saved = await Question.findOneAndUpdate(
       { question: item.question },
       { $set: item },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
+      { upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
     );
     questionDocs.push(saved);
   }
 
-  await AptitudeTest.findOneAndUpdate(
-    { title: "Sprint 1 Sample Aptitude Test" },
+  // Every test has exactly 5 questions. "questions" lists positions in questionData above.
+  const tests = [
     {
-      $set: {
-        title: "Sprint 1 Sample Aptitude Test",
-        description: "Published sample assessment covering Quant, Logical, and Verbal aptitude.",
-        questions: questionDocs.map((question) => question._id),
-        status: "published",
-        isPublished: true,
-        durationMinutes: 15,
-      },
+      title: "Sprint 1 Sample Aptitude Test",
+      description: "A quick mixed test with Quant, Logical and Verbal questions.",
+      category: "Mixed",
+      questions: [0, 1, 3, 4, 6],
     },
-    { upsert: true, new: true, setDefaultsOnInsert: true }
-  );
+    {
+      title: "Quantitative Aptitude Practice",
+      description: "Speed, percentages, interest, averages and work problems.",
+      category: "Quant",
+      questions: [2, 9, 10, 11, 12],
+    },
+    {
+      title: "Logical and Verbal Reasoning Practice",
+      description: "Series, deductions, grammar and vocabulary.",
+      category: "Logical and Verbal",
+      questions: [5, 13, 14, 7, 8],
+    },
+  ];
 
-  console.log("Seed complete: 1 admin, 4 students, 3 approved companies, 10 internships, 9 questions, 1 published test.");
+  for (const test of tests) {
+    await AptitudeTest.findOneAndUpdate(
+      { title: test.title },
+      {
+        $set: {
+          title: test.title,
+          description: test.description,
+          category: test.category,
+          questions: test.questions.map((index) => questionDocs[index]._id),
+          status: "published",
+          isPublished: true,
+          durationMinutes: 10,
+        },
+      },
+      { upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
+    );
+  }
+
+  console.log("Seed complete: 1 admin, 4 students, 3 approved companies, 10 internships, 15 questions, 3 published tests (5 questions each).");
 }
 
 seed()

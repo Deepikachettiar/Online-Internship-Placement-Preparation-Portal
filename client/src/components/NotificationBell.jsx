@@ -56,24 +56,27 @@ export default function NotificationBell() {
   }
 
   return (
-    <div className="relative">
+    <div className="bell">
       <button
         type="button"
         aria-label={`Notifications, ${unreadCount} unread`}
         aria-expanded={open}
         onClick={() => { setOpen(value => !value); if (!open) refresh(); }}
-        className="relative rounded-md px-3 py-2"
+        className="secondary bell-btn"
       >
-        🔔
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+          <path d="M13.7 21a2 2 0 0 1-3.4 0" />
+        </svg>
         {unreadCount > 0 && (
-          <span className="ml-1 rounded-full px-2 py-0.5 text-xs">
+          <span className="bell-count">
             {unreadCount > 99 ? "99+" : unreadCount}
           </span>
         )}
       </button>
       {open && (
-        <div className="absolute right-0 z-50 mt-2 w-80 rounded-lg border bg-white p-3 shadow-lg">
-          <div className="mb-2 flex items-center justify-between">
+        <div className="bell-panel">
+          <div className="bell-head">
             <strong>Notifications</strong>
             <button type="button" onClick={refresh}>Refresh</button>
           </div>
@@ -81,13 +84,13 @@ export default function NotificationBell() {
           {items.length === 0 ? (
             <p>No notifications yet.</p>
           ) : (
-            <ul className="max-h-96 space-y-2 overflow-auto">
+            <ul className="bell-list">
               {items.map(item => (
-                <li key={item._id} className={`rounded border p-2 ${item.isRead ? "" : "font-semibold"}`}>
-                  <button type="button" className="w-full text-left" onClick={() => markRead(item)}>
-                    <span className="block">{item.title}</span>
-                    <span className="block text-sm font-normal">{item.message}</span>
-                    {!item.isRead && <span className="text-xs">Mark as read</span>}
+                <li key={item._id} className={item.isRead ? "" : "unread"}>
+                  <button type="button" className="bell-item" onClick={() => markRead(item)}>
+                    <span className="bell-title">{item.title}</span>
+                    <span className="bell-msg">{item.message}</span>
+                    {!item.isRead && <span className="bell-hint">Mark as read</span>}
                   </button>
                 </li>
               ))}

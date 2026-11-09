@@ -62,7 +62,8 @@ docs/               Backlog, sprint plans, test reports, deviations, and NFR doc
    npm run dev
    ```
    `VITE_API_URL` in `client/.env` must point to the API (default `http://localhost:5000`).
-4. Open http://localhost:5173 and click "Check API Health". It should show that the API is healthy.
+4. No MongoDB installed (and no Docker)? In a third terminal run `cd server && npm run dev:db`. It starts a local database on port 27017 and keeps its data in `server/.data`. Then run `npm run seed` once in `server` to load the demo data.
+5. Open http://localhost:5173. You should see the portal home page; use the demo logins below to sign in.
 
 If the server stops with "MONGO_URI is missing" or cannot connect, make sure MongoDB is running and `server/.env` exists.
 
@@ -105,7 +106,7 @@ Run `npm run seed` in `server/` once MongoDB is running. It can be run again saf
 The GitHub Actions workflow in `.github/workflows/ci.yml` installs the packages, runs lint, build and tests for client and server on every pull request.
 
 ## Documentation
-All project documents are in `docs/`: backlog, sprint plan, progress log, deviations from the SRS/SAD/STP, test cases, test and coverage reports, and the NFR checks (response time, load, data integrity, code structure, usability, browser and mobile, accessibility). The Sprint 1 demo video is `docs/sprint 1 demo.mp4`.
+All project documents are in `docs/`: backlog, sprint plan, progress log, deviations from the SRS/SAD/STP, test cases, test and coverage reports, and the NFR checks (response time, load, data integrity, code structure, usability, browser and mobile, accessibility). The demo videos are `docs/sprint 1 demo.mp4` and `docs/sprint 2 demo.mp4`.
 
 ## Workflow
 - One branch and one pull request per issue. The repo owner reviews and merges.

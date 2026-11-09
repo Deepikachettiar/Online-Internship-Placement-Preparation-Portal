@@ -1,13 +1,13 @@
-
-import { useState } from "react";
-import { Link, Routes, Route } from "react-router-dom";
-import axios from "axios";
-import LogoutButton from "./components/LogoutButton";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { getToken } from "./utils/auth";
-import CompanyRegistration from "./pages/CompanyRegistration";
+import Home from "./pages/Home";
 import Login from "./pages/Login";
+import StudentRegistration from "./pages/StudentRegistration";
+import CompanyRegistration from "./pages/CompanyRegistration";
 import ProtectedRoute from "./components/ProtectedRoute";
 import StudentLayout from "./components/StudentLayout";
+import CompanyLayout from "./components/CompanyLayout";
+import AdminLayout from "./components/AdminLayout";
 import StudentDashboard from "./pages/StudentDashboard";
 import StudentProfile from "./pages/StudentProfile";
 import BrowseInternships from "./pages/BrowseInternships";
@@ -15,111 +15,58 @@ import MyApplications from "./pages/MyApplications";
 import AptitudeTests from "./pages/AptitudeTests";
 import TakeTest from "./pages/TakeTest";
 import Analytics from "./pages/Analytics";
+import CompanyDashboard from "./pages/CompanyDashboard";
+import CompanyProfile from "./pages/CompanyProfile";
+import PostInternship from "./pages/PostInternship";
+import CompanyInternships from "./pages/CompanyInternships";
+import Applicants from "./pages/Applicants";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminQuestions from "./pages/AdminQuestions";
 import AdminTestConfiguration from "./pages/AdminTestConfiguration";
 import "./App.css";
-
-function Home() {
-  const [apiStatus, setApiStatus] = useState("Not checked");
-  const [loggedIn, setLoggedIn] = useState(Boolean(getToken()));
-
-  async function checkApi() {
-    try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/health`
-      );
-      setApiStatus(response.data.message);
-    } catch {
-      setApiStatus("Backend unavailable. Make sure the server is running.");
-    }
-  }
-
-  return (
-    <main>
-      <h1>Online Internship &amp; Placement Preparation Portal</h1>
-      <p>
-        Your platform for internship opportunities and placement preparation.
-      </p>
-
-      <nav>
-        <Link to="/student-register">Student Registration</Link>
-        {" | "}
-        <Link to="/company-register">Company Registration</Link>
-        {" | "}
-        <Link to="/login">Login</Link>
-        {" | "}
-        <Link to="/student">Student Dashboard</Link>
-        {loggedIn && (
-          <>
-            {" | "}
-            <LogoutButton onLogout={() => setLoggedIn(false)} />
-          </>
-        )}
-      </nav>
-
-      <section>
-        <h2>Backend Connection</h2>
-        <button onClick={checkApi}>Check API Health</button>
-        <p role="status">{apiStatus}</p>
-      </section>
-    </main>
-  );
-}
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
-      <Route
-        path="/company-register"
-        element={<CompanyRegistration />}
-      />
+      <Route path="/student-register" element={<StudentRegistration />} />
+      <Route path="/company-register" element={<CompanyRegistration />} />
 
       {/* Student area */}
       <Route element={<ProtectedRoute role="student" />}>
         <Route path="/student" element={<StudentLayout />}>
           <Route index element={<StudentDashboard />} />
-          <Route
-            path="profile"
-            element={<StudentProfile token={getToken()} />}
-          />
-          <Route
-            path="internships"
-            element={<BrowseInternships token={getToken()} />}
-          />
-          <Route
-            path="applications"
-            element={<MyApplications token={getToken()} />}
-          />
-          <Route
-            path="tests"
-            element={<AptitudeTests token={getToken()} />}
-          />
-          <Route
-            path="tests/:id"
-            element={<TakeTest token={getToken()} />}
-          />
-          <Route
-            path="analytics"
-            element={<Analytics token={getToken()} />}
-          />
+          <Route path="profile" element={<StudentProfile token={getToken()} />} />
+          <Route path="internships" element={<BrowseInternships token={getToken()} />} />
+          <Route path="applications" element={<MyApplications token={getToken()} />} />
+          <Route path="tests" element={<AptitudeTests token={getToken()} />} />
+          <Route path="tests/:id" element={<TakeTest token={getToken()} />} />
+          <Route path="analytics" element={<Analytics token={getToken()} />} />
+        </Route>
+      </Route>
+
+      {/* Company area */}
+      <Route element={<ProtectedRoute role="company" />}>
+        <Route path="/company" element={<CompanyLayout />}>
+          <Route index element={<CompanyDashboard />} />
+          <Route path="profile" element={<CompanyProfile />} />
+          <Route path="post" element={<PostInternship />} />
+          <Route path="internships" element={<CompanyInternships />} />
+          <Route path="internships/:id/applicants" element={<Applicants />} />
         </Route>
       </Route>
 
       {/* Admin area */}
       <Route element={<ProtectedRoute role="admin" />}>
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route
-          path="/admin/questions"
-          element={<AdminQuestions />}
-        />
-        <Route
-          path="/admin/tests"
-          element={<AdminTestConfiguration />}
-        />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="questions" element={<AdminQuestions />} />
+          <Route path="tests" element={<AdminTestConfiguration />} />
+        </Route>
       </Route>
+
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

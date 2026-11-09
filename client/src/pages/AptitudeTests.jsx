@@ -34,19 +34,27 @@ export default function AptitudeTests({ token }) {
   return (
     <main>
       <h1>Aptitude Tests</h1>
+      <p>Pick a test and answer all questions before the timer runs out.</p>
+
       {tests.length === 0 ? (
         <p>No tests are published yet.</p>
       ) : (
-        <ul>
+        <div className="test-grid">
           {tests.map((test) => (
-            <li key={test._id}>
+            <article key={test._id} className="test-card">
+              {test.category && <span className="test-tag">{test.category}</span>}
               <h2>{test.title}</h2>
               {test.description && <p>{test.description}</p>}
-              <p>Time limit: {test.durationMinutes} minutes</p>
-              <Link to={`/student/tests/${test._id}`}>Take test</Link>
-            </li>
+              <ul className="test-meta">
+                <li>{test.questionCount} questions</li>
+                <li>{test.durationMinutes} minutes</li>
+              </ul>
+              <Link to={`/student/tests/${test._id}`} className="btn">
+                Start test
+              </Link>
+            </article>
           ))}
-        </ul>
+        </div>
       )}
     </main>
   );
